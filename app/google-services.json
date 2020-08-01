@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "67030907920",
+    "firebase_url": "https://rstracker-a9b78.firebaseio.com",
+    "project_id": "rstracker-a9b78",
+    "storage_bucket": "rstracker-a9b78.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67030907920:android:094f0b075a30bd5cdcde95",
+        "android_client_info": {
+          "package_name": "com.rshack.rstracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67030907920-jub3nd9i37if94k5cqu5usdfaho7ta83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1YUM8CFeRoZCfKBebV3JLUfrOp2puAM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67030907920-jub3nd9i37if94k5cqu5usdfaho7ta83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
