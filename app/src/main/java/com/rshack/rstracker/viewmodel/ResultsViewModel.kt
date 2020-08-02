@@ -3,8 +3,11 @@ package com.rshack.rstracker.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.rshack.rstracker.model.data.Track
-import java.util.*
+import com.rshack.rstracker.model.repository.IRepository
+import com.rshack.rstracker.model.repository.RemoteRepository
+import kotlinx.coroutines.launch
 
 class ResultsViewModel : ViewModel() {
 
@@ -12,49 +15,13 @@ class ResultsViewModel : ViewModel() {
     val tracks: LiveData<List<Track>>
         get() = _tracks
 
+    private val repository: IRepository = RemoteRepository()
+
     init {
-        getTracks()
+        viewModelScope.launch {
+            // Load from firebase though repository
+            _tracks.value = repository.load()
+        }
     }
 
-    fun getTracks() {
-        // Load from firebase though repository
-        _tracks.value = listOf(
-            Track(
-                Calendar.getInstance().time,
-                32192f,
-                42f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                9224f,
-                4221f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                912f,
-                44242f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                9212f,
-                4287f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                9872f,
-                4287f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                9542f,
-                4412f
-            ),
-            Track(
-                Calendar.getInstance().time,
-                9712f,
-                4212f
-            )
-        )
-
-    }
 }

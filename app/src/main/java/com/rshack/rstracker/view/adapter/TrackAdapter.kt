@@ -38,7 +38,6 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         itemView.apply {
             tv_date.text = track.date.toString()
-            tv_distance.text = track.distance.toString()
             tv_time.text = track.time.toString()
         }
     }
