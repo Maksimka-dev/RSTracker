@@ -1,9 +1,11 @@
 package com.rshack.rstracker.view.ui
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Chronometer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -14,7 +16,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
-import com.rshack.rstracker.databinding.FragmentResultsBinding
 import com.rshack.rstracker.viewmodel.MapViewModel
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -28,6 +29,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
 
     private lateinit var mMap: GoogleMap
+    private lateinit var stopwatch: Chronometer
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +37,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
+
+        stopwatch = binding.stopwatch
+
+        binding.floatingButton.setOnClickListener {
+            println("${SystemClock.elapsedRealtime() - stopwatch.base}")
+            stopwatch.start()
+        }
+
         return binding.root
     }
 
