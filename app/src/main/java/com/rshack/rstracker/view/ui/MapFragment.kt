@@ -87,19 +87,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                 stopService()
             } else {
-                stopwatch.base = SystemClock.elapsedRealtime()
-                stopwatch.start()
-                binding.floatingButton.setImageResource(R.drawable.ic_stop)
-
                 //start service if permission granted
                 if (isLocationPermissionGranted()) {
+                    stopwatch.base = SystemClock.elapsedRealtime()
+                    stopwatch.start()
+                    binding.floatingButton.setImageResource(R.drawable.ic_stop)
+
                     Log.d(GpsService.TAG, "service started")
                     trackDate = System.currentTimeMillis()
                     startTrackerService()
                     subscribeToUpdates()
-                }
 
-                isRunning = true
+                    isRunning = true
+                }
             }
         }
 
