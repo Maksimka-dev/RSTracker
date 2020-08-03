@@ -41,7 +41,7 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.apply {
             tv_date.text = DateFormat.getInstance().format(track.date)
             tv_distance.text = (round(track.distance * 100) / 100.0).toString()
-            tv_time.text = (track.time / 1000).toString()
+            tv_time.text = (track.time / 1000).toString() + " с"
         }
     }
 }
