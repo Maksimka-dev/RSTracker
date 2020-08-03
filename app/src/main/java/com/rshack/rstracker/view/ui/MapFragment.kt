@@ -236,6 +236,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val lng = value["longitude"].toString().toDouble()
             val location = LatLng(lat, lng)
             points.add(location)
+            binding.tvDistance.text = (round(polylineLength() * 10) / 10.0).toString() + " м"
             drawPolyline()
         } catch (e: Exception) {
         }
