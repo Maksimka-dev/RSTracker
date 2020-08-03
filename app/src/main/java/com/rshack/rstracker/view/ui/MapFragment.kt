@@ -71,6 +71,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         binding.floatingButton.setOnClickListener {
             if (isRunning) {
+                // TODO save in firebase
+                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
                 stopwatch.stop()
 
                 //save time and distance to database
@@ -100,6 +102,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 isRunning = true
             }
         }
+
+        binding.tvDistance
 
         return binding.root
     }
