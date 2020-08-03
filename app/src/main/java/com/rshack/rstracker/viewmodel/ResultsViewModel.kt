@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rshack.rstracker.model.data.Track
-import com.rshack.rstracker.model.repository.IRepository
-import com.rshack.rstracker.model.repository.RemoteRepository
+import com.rshack.rstracker.model.repository.ITrackListRepository
+import com.rshack.rstracker.model.repository.TrackListRepository
 import kotlinx.coroutines.launch
 
 class ResultsViewModel : ViewModel() {
@@ -15,7 +15,7 @@ class ResultsViewModel : ViewModel() {
     val tracks: LiveData<List<Track>>
         get() = _tracks
 
-    private val repository: IRepository = RemoteRepository()
+    private val repository: ITrackListRepository = TrackListRepository()
 
     init {
         viewModelScope.launch {

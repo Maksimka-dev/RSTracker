@@ -13,13 +13,13 @@ class TrackDiffCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].time == newList[newItemPosition].time
+        return oldList[oldItemPosition].id == newList[newItemPosition].id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val (id1, url1) = oldList[oldItemPosition]
-        val (id2, url2) = newList[newItemPosition]
+        val (id1, date1) = oldList[oldItemPosition]
+        val (id2, date2) = newList[newItemPosition]
 
-        return id1 == id2 && url1 == url2
+        return id1 == id2 && date1 == date2
     }
 }
