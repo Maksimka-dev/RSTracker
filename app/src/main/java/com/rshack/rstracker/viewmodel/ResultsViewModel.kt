@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ResultsViewModel : ViewModel() {
 
-    private val _tracks = MutableLiveData<List<Track>>()
+    private lateinit var _tracks : LiveData<List<Track>>
     val tracks: LiveData<List<Track>>
         get() = _tracks
 
@@ -20,7 +20,7 @@ class ResultsViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             // Load from firebase though repository
-            _tracks.value = repository.load()
+            _tracks = repository.load()
         }
     }
 

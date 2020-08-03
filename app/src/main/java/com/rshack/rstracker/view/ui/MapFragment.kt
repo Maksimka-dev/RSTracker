@@ -3,23 +3,18 @@ package com.rshack.rstracker.view.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import android.widget.Chronometer
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -29,7 +24,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -38,10 +32,8 @@ import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
-import java.lang.Exception
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
 
@@ -80,23 +72,33 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.floatingButton.setOnClickListener {
             if (isRunning) {
                 stopwatch.stop()
+
+                //save time and distance to database
+                val time = SystemClock.elapsedRealtime() - stopwatch.base
+                val distance = polylineLength()
+                saveTimeAndDistance(time, distance)
+                points.clear()
+
                 stopwatch.base = SystemClock.elapsedRealtime()
                 isRunning = false
                 binding.floatingButton.setImageResource(R.drawable.ic_start)
-                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
-                // TODO save in firebase
+
+                stopService()
             } else {
                 stopwatch.base = SystemClock.elapsedRealtime()
                 stopwatch.start()
                 binding.floatingButton.setImageResource(R.drawable.ic_stop)
+
+                //start service if permission granted
+                if (isLocationPermissionGranted()) {
+                    Log.d(GpsService.TAG, "service started")
+                    trackDate = System.currentTimeMillis()
+                    startTrackerService()
+                    subscribeToUpdates()
+                }
+
                 isRunning = true
             }
-        }
-
-        //start service if permission granted
-        if (isLocationPermissionGranted()) {
-            Log.d(GpsService.TAG, "service started")
-            startTrackerService()
         }
 
         return binding.root
@@ -136,17 +138,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMap.setPadding(0, 0, 0, 800)
         if (isLocationPermissionGranted()) {
             mMap.isMyLocationEnabled = true
-            mMap.setOnMyLocationClickListener {location ->
+            mMap.setOnMyLocationClickListener { location ->
                 val latLng = LatLng(location.latitude, location.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
             }
         }
-
-        subscribeToUpdates()
     }
 
     private fun startTrackerService() {
-        trackDate = System.currentTimeMillis()
         val intent = Intent(application, GpsService()::class.java)
         intent.putExtra(GpsService.TRACK_DATE, trackDate)
         application.startService(intent)
@@ -179,6 +178,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             // Start the service when the permission is granted
             startTrackerService()
         }
+    }
+
+    private fun saveTimeAndDistance(time: Long, distance: Float) {
+        val path = getString(R.string.firebase_path) + "/" +
+                getString(R.string.track_id) + trackDate
+        var ref = FirebaseDatabase.getInstance().getReference("$path/time")
+        ref.setValue(time)
+        ref = FirebaseDatabase.getInstance().getReference("$path/distance")
+        ref.setValue(distance)
     }
 
     private fun subscribeToUpdates() {

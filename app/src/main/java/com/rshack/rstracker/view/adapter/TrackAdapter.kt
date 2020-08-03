@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
 import kotlinx.android.synthetic.main.recycler_view_item.view.*
+import java.text.DateFormat
+import kotlin.math.round
 
 class TrackAdapter : RecyclerView.Adapter<ViewHolder>() {
 
@@ -37,9 +39,9 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(track: Track) {
         itemView.apply {
-            tv_date.text = track.date.toString()
-            tv_distance.text = track.distance.toString()
-            tv_time.text = track.time.toString()
+            tv_date.text = DateFormat.getInstance().format(track.date)
+            tv_distance.text = (round(track.distance * 100) / 100.0).toString()
+            tv_time.text = (track.time / 1000).toString()
         }
     }
 }
