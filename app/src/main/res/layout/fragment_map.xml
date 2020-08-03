@@ -28,6 +28,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/googleg_standard_color_18" />
+        android:src="@drawable/ic_start" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
