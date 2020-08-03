@@ -45,12 +45,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         binding.floatingButton.setOnClickListener {
             if (isRunning) {
+                // TODO save in firebase
+                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
                 stopwatch.stop()
                 stopwatch.base = SystemClock.elapsedRealtime()
                 isRunning = false
                 binding.floatingButton.setImageResource(R.drawable.ic_start)
-                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
-                // TODO save in firebase
             } else {
                 stopwatch.base = SystemClock.elapsedRealtime()
                 stopwatch.start()
@@ -58,6 +58,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 isRunning = true
             }
         }
+
+        binding.tvDistance
 
         return binding.root
     }
