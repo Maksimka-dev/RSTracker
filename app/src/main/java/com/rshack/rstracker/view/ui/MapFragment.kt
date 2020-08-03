@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.viewmodel.MapViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -30,6 +32,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var stopwatch: Chronometer
+    private var isRunning = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,12 +40,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-
         stopwatch = binding.stopwatch
 
         binding.floatingButton.setOnClickListener {
-            println("${SystemClock.elapsedRealtime() - stopwatch.base}")
-            stopwatch.start()
+            if (isRunning) {
+                stopwatch.stop()
+                isRunning = false
+            } else {
+                stopwatch.base = SystemClock.elapsedRealtime()
+                stopwatch.start()
+                isRunning = true
+            }
         }
 
         return binding.root
