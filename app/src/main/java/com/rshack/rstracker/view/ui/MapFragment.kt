@@ -1,5 +1,15 @@
 package com.rshack.rstracker.view.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Application
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.os.SystemClock
@@ -28,6 +38,8 @@ import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
+import java.lang.Exception
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -81,18 +93,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        Log.d(GpsService.TAG, "onCreate")
-
-        // Check GPS is enabled
-        val lm =
-            application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(
-                application, "Please enable location services",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
+        //start service if permission granted
         if (isLocationPermissionGranted()) {
             Log.d(GpsService.TAG, "service started")
             startTrackerService()
@@ -111,7 +112,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopService()
         _binding = null
+    }
+
+    private fun stopService() {
+        application.stopService(Intent(application, GpsService()::class.java))
     }
 
     /**
@@ -175,7 +181,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun subscribeToUpdates() {
-        val path = getString(R.string.firebase_path) + "/" + trackDate
+        val path = getString(R.string.firebase_path) + "/" +
+                getString(R.string.track_id) + trackDate
         val ref =
             FirebaseDatabase.getInstance().getReference(path)
         ref.addChildEventListener(object : ChildEventListener {
@@ -210,13 +217,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun addPoint(dataSnapshot: DataSnapshot) {
-        val value = dataSnapshot.value as HashMap<*, *>?
-        if (value?.size!! > 2) {
-            val lat = value["latitude"].toString().toDouble()
+        try {
+            val value = dataSnapshot.value as HashMap<*, *>?
+            val lat = value!!["latitude"].toString().toDouble()
             val lng = value["longitude"].toString().toDouble()
             val location = LatLng(lat, lng)
             points.add(location)
             drawPolyline()
+        } catch (e: Exception) {
         }
     }
 

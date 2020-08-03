@@ -14,10 +14,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.Track
@@ -25,6 +22,11 @@ import com.rshack.rstracker.model.Track
 class GpsService : Service() {
 
     private var trackDate: Long = 0
+
+    private val client by lazy {
+        LocationServices.getFusedLocationProviderClient(this)
+    }
+
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -39,6 +41,12 @@ class GpsService : Service() {
     override fun onCreate() {
         super.onCreate()
         buildNotification()
+    }
+
+    override fun onDestroy() {
+        client.removeLocationUpdates(gpsListener)
+        unregisterReceiver(stopReceiver)
+        super.onDestroy()
     }
 
     private fun buildNotification() {
@@ -81,7 +89,6 @@ class GpsService : Service() {
         ) {
             Log.d(TAG, "received stop broadcast")
             // Stop the service when the notification is tapped
-            unregisterReceiver(this)
             stopSelf()
         }
     }
@@ -91,9 +98,7 @@ class GpsService : Service() {
         request.interval = 5000
         request.fastestInterval = 2500
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        val client =
-            LocationServices.getFusedLocationProviderClient(this)
-        var path = getString(R.string.firebase_path)
+        val path = getString(R.string.firebase_path)
 
         val id = getString(R.string.track_id) + trackDate
         val track = Track(trackDate)
@@ -109,17 +114,7 @@ class GpsService : Service() {
         if (permission == PackageManager.PERMISSION_GRANTED) {
             // Request location updates and when an update is
             // received, store the location in Firebase
-            client.requestLocationUpdates(request, object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    val location: Location? = locationResult.lastLocation
-                    if (location != null) {
-                        val locationRef = FirebaseDatabase.getInstance()
-                            .getReference("$path/$id/${location.time}")
-                        Log.d(TAG, "location update $location")
-                        locationRef.setValue(location)
-                    }
-                }
-            }, null)
+            client.requestLocationUpdates(request, gpsListener, null)
         }
     }
 
@@ -129,5 +124,19 @@ class GpsService : Service() {
         const val CHANNEL_ID = "channel_id"
         const val CHANNEL_NAME = "channel_name"
         const val TRACK_DATE = "track_date"
+    }
+
+    private val gpsListener = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val location: Location? = locationResult.lastLocation
+            val path = getString(R.string.firebase_path)
+            val id = getString(R.string.track_id) + trackDate
+            if (location != null) {
+                val locationRef = FirebaseDatabase.getInstance()
+                    .getReference("$path/$id/${location.time}")
+                Log.d(TAG, "location update $location")
+                locationRef.setValue(location)
+            }
+        }
     }
 }
