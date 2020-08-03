@@ -2,6 +2,7 @@ package com.rshack.rstracker.view.ui
 
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,10 +46,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.floatingButton.setOnClickListener {
             if (isRunning) {
                 stopwatch.stop()
+                stopwatch.base = SystemClock.elapsedRealtime()
                 isRunning = false
+                binding.floatingButton.setImageResource(R.drawable.ic_start)
+                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
+                // TODO save in firebase
             } else {
                 stopwatch.base = SystemClock.elapsedRealtime()
                 stopwatch.start()
+                binding.floatingButton.setImageResource(R.drawable.ic_stop)
                 isRunning = true
             }
         }
