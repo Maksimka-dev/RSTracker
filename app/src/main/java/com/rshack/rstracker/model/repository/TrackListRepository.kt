@@ -7,14 +7,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
-import com.rshack.rstracker.service.GpsService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
-import java.text.DateFormat
 import java.util.*
 
 class TrackListRepository : ITrackListRepository {
@@ -30,7 +25,7 @@ class TrackListRepository : ITrackListRepository {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("Count " ,"" + snapshot.childrenCount)
+                Log.d("Count ", "" + snapshot.childrenCount)
 
                 tracks.value = snapshot.children.map { snap ->
                     val value = snap.value as HashMap<*, *>?

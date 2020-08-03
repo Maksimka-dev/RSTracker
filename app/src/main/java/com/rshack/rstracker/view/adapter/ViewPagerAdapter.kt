@@ -6,11 +6,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.rshack.rstracker.view.ui.MapFragment
 import com.rshack.rstracker.view.ui.ResultsFragment
 
-class ViewPagerAdapter(activity: AppCompatActivity): FragmentStateAdapter(activity) {
+class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int = 2
 
-    override fun createFragment(position: Int): Fragment = when(position) {
+    override fun createFragment(position: Int): Fragment = when (position) {
         0 -> MapFragment.newInstance()
         else -> ResultsFragment.newInstance()
     }
