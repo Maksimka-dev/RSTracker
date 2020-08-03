@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
-import com.rshack.rstracker.model.Track
+import com.rshack.rstracker.model.data.Track
 
 class GpsService : Service() {
 
@@ -101,7 +101,7 @@ class GpsService : Service() {
         val path = getString(R.string.firebase_path)
 
         val id = getString(R.string.track_id) + trackDate
-        val track = Track(trackDate)
+        val track = Track(id, trackDate, 0f, 0)
 
         val ref = FirebaseDatabase.getInstance()
             .getReference("$path/$id")

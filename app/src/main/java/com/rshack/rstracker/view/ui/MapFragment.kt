@@ -133,6 +133,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
+        mMap.setPadding(0, 0, 0, 800)
         if (isLocationPermissionGranted()) {
             mMap.isMyLocationEnabled = true
             mMap.setOnMyLocationClickListener {location ->
