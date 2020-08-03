@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Chronometer
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -73,6 +74,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             if (isRunning) {
                 // TODO save in firebase
                 Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
+                Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
                 stopwatch.stop()
 
                 //save time and distance to database
@@ -89,6 +91,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             } else {
                 //start service if permission granted
                 if (isLocationPermissionGranted()) {
+                    Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
                     stopwatch.base = SystemClock.elapsedRealtime()
                     stopwatch.start()
                     binding.floatingButton.setImageResource(R.drawable.ic_stop)
