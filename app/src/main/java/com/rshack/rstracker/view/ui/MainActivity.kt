@@ -3,7 +3,6 @@ package com.rshack.rstracker.view.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.rshack.rstracker.R

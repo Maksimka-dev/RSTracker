@@ -68,10 +68,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
 
         viewModel.points.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
-            binding.tvDistance.text =
-                (round(viewModel.getPolylineLength() * 10) / 10.0).toString() + " м"
-            drawPolyline()
+            if (it.isNotEmpty()) {
+                binding.tvDistance.text =
+                    (round(viewModel.getPolylineLength() * 10) / 10.0).toString() + " м"
+                drawPolyline(it)
+            }
         })
 
 
@@ -190,17 +191,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun drawPolyline() {
+    private fun drawPolyline(points: List<LatLng>) {
         //clear map and polyline
         polyline.points.clear()
         map.clear()
         //add start and end markers
-        map.addMarker(MarkerOptions().title("Start").position(viewModel.points.value!!.first()))
-        if (viewModel.points.value!!.size > 1)
-            map.addMarker(MarkerOptions().title("End").position(viewModel.points.value!!.last()))
+        map.addMarker(MarkerOptions().title("Start").position(points.first()))
+        if (points.size > 1)
+            map.addMarker(MarkerOptions().title("End").position(points.last()))
         //add polyline
         map.addPolyline(
-            polyline.addAll(viewModel.points.value)
+            polyline.addAll(points)
         )
     }
 

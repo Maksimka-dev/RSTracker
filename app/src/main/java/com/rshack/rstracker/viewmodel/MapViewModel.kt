@@ -29,6 +29,10 @@ class MapViewModel : ViewModel() {
     val points: LiveData<MutableList<LatLng>>
         get() = _points
 
+    init {
+        _points.value = mutableListOf()
+    }
+
     fun changeStatus() {
         if (_isRunning.value == null) _isRunning.value = false
         else _isRunning.value = !_isRunning.value!!
