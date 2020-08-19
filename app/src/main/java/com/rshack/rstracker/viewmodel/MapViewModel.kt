@@ -25,13 +25,10 @@ class MapViewModel : ViewModel() {
     val isRunning: LiveData<Boolean>
         get() = _isRunning
 
-    private val _points = MutableLiveData<MutableList<LatLng>>()
-    val points: LiveData<MutableList<LatLng>>
+    private val _points = MutableLiveData<List<LatLng>>()
+        .apply { value = listOf() }
+    val points: LiveData<List<LatLng>>
         get() = _points
-
-    init {
-        _points.value = mutableListOf()
-    }
 
     fun changeStatus() {
         if (_isRunning.value == null) _isRunning.value = false
@@ -39,7 +36,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun clearPoints() {
-        _points.value?.clear()
+        _points.value = listOf()
     }
 
     fun saveTimeAndDistanceToFirebase(
@@ -98,7 +95,9 @@ class MapViewModel : ViewModel() {
             val lat = value!!["latitude"].toString().toDouble()
             val lng = value["longitude"].toString().toDouble()
             val location = LatLng(lat, lng)
-            _points.value?.add(location)
+            val list = _points.value?.toMutableList()
+            list?.add(location)
+            _points.value = list
 //            points.add(location)
 //            binding.tvDistance.text = (round(polylineLength() * 10) / 10.0).toString() + " м"
 //            drawPolyline()
