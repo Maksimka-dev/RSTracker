@@ -115,7 +115,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         binding.floatingButton.setImageResource(R.drawable.ic_stop)
                         trackDate = System.currentTimeMillis()
                         startTrackerService()
-                        viewModel.subscribeToUpdates(requireContext(), trackDate)
+                        viewModel.startNewTrack(trackDate)
                     }
                 }
             }
@@ -204,16 +204,5 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             polyline.addAll(points)
         )
     }
-
-//    private fun polylineLength(): Float {
-//        if (viewModel.points.value!!.size <= 1) {
-//            return 0f
-//        }
-//        return viewModel.points.value!!.zipWithNext { a, b ->
-//            val results = FloatArray(1)
-//            Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, results)
-//            results[0]
-//        }.sum()
-//    }
 
 }

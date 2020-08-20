@@ -1,21 +1,14 @@
 package com.rshack.rstracker.viewmodel
 
 import android.content.Context
-import android.location.Location
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
-import com.rshack.rstracker.service.GpsService
-import java.util.*
 
 class MapViewModel : ViewModel() {
 
@@ -25,10 +18,8 @@ class MapViewModel : ViewModel() {
     val isRunning: LiveData<Boolean>
         get() = _isRunning
 
-    private val _points = MutableLiveData<List<LatLng>>()
-        .apply { value = listOf() }
     val points: LiveData<List<LatLng>>
-        get() = _points
+        get() = repository.getCoordinates()
 
     fun changeStatus() {
         if (_isRunning.value == null) _isRunning.value = false
@@ -36,7 +27,11 @@ class MapViewModel : ViewModel() {
     }
 
     fun clearPoints() {
-        _points.value = listOf()
+        repository.clearCoordinates()
+    }
+
+    fun startNewTrack(trackDate: Long) {
+        repository.subscribeToUpdates(trackDate)
     }
 
     fun saveTimeAndDistanceToFirebase(
@@ -53,67 +48,5 @@ class MapViewModel : ViewModel() {
         ref.setValue(distance)
     }
 
-    fun subscribeToUpdates(context: Context, trackDate: Long) {
-        val path = context.getString(R.string.firebase_path) + "/" +
-                context.getString(R.string.track_id) + trackDate
-        val ref =
-            FirebaseDatabase.getInstance().getReference(path)
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-                addPoint(dataSnapshot)
-            }
-
-            override fun onChildChanged(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-            }
-
-            override fun onChildMoved(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-            }
-
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-            override fun onCancelled(error: DatabaseError) {
-                Log.d(
-                    GpsService.TAG,
-                    "Failed to read value.",
-                    error.toException()
-                )
-            }
-        })
-    }
-
-    private fun addPoint(dataSnapshot: DataSnapshot) {
-        try {
-            val value = dataSnapshot.value as HashMap<*, *>?
-            val lat = value!!["latitude"].toString().toDouble()
-            val lng = value["longitude"].toString().toDouble()
-            val location = LatLng(lat, lng)
-            val list = _points.value?.toMutableList()
-            list?.add(location)
-            _points.value = list
-//            points.add(location)
-//            binding.tvDistance.text = (round(polylineLength() * 10) / 10.0).toString() + " м"
-//            drawPolyline()
-        } catch (e: Exception) {
-        }
-    }
-
-    fun getPolylineLength(): Float {
-        if (_points.value!!.size <= 1) {
-            return 0f
-        }
-        return _points.value!!.zipWithNext { a, b ->
-            val results = FloatArray(1)
-            Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, results)
-            results[0]
-        }.sum()
-    }
-
+    fun getPolylineLength() = repository.getPolylineLength()
 }
