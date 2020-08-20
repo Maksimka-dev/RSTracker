@@ -36,7 +36,6 @@ class TrackRepository : ITrackRepository {
         }.sum()
     }
 
-
     override fun subscribeToUpdates(trackDate: Long) {
         val path = "locations/track$trackDate"
         val ref =
@@ -83,6 +82,14 @@ class TrackRepository : ITrackRepository {
             points.value = list
         } catch (e: Exception) {
         }
+    }
+
+    override fun saveTimeAndDistanceToFirebase(time: Long, distance: Float, trackDate: Long) {
+        val path = "locations/track$trackDate"
+        var ref = FirebaseDatabase.getInstance().getReference("$path/time")
+        ref.setValue(time)
+        ref = FirebaseDatabase.getInstance().getReference("$path/distance")
+        ref.setValue(distance)
     }
 
 }

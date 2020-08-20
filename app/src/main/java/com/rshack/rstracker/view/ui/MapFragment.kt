@@ -46,12 +46,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var stopwatch: Chronometer
-
-    //    private var isRunning = MediatorLiveData<Boolean>()
-
     private var trackDate: Long = 0
-
-//    private val points = mutableListOf<LatLng>()
 
     private val polyline = PolylineOptions()
         .width(5f)
@@ -66,7 +61,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
-
         viewModel.points.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 binding.tvDistance.text =
@@ -74,7 +68,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 drawPolyline(it)
             }
         })
-
 
         binding.floatingButton.setOnClickListener {
             viewModel.changeStatus()
@@ -94,12 +87,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     //save time and distance to database
                     val time = SystemClock.elapsedRealtime() - stopwatch.base
                     val distance = viewModel.getPolylineLength()
-                    viewModel.saveTimeAndDistanceToFirebase(
-                        requireContext(),
-                        time,
-                        distance,
-                        trackDate
-                    )
+                    viewModel.saveIntoFirebase(time, distance, trackDate)
                     viewModel.clearPoints()
                     stopwatch.base = SystemClock.elapsedRealtime()
                     binding.floatingButton.setImageResource(R.drawable.ic_start)

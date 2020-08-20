@@ -1,12 +1,9 @@
 package com.rshack.rstracker.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.database.FirebaseDatabase
-import com.rshack.rstracker.R
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
 
@@ -34,18 +31,8 @@ class MapViewModel : ViewModel() {
         repository.subscribeToUpdates(trackDate)
     }
 
-    fun saveTimeAndDistanceToFirebase(
-        context: Context,
-        time: Long,
-        distance: Float,
-        trackDate: Long
-    ) {
-        val path = context.getString(R.string.firebase_path) + "/" +
-                context.getString(R.string.track_id) + trackDate
-        var ref = FirebaseDatabase.getInstance().getReference("$path/time")
-        ref.setValue(time)
-        ref = FirebaseDatabase.getInstance().getReference("$path/distance")
-        ref.setValue(distance)
+    fun saveIntoFirebase(time: Long, distance: Float, trackDate: Long) {
+        repository.saveTimeAndDistanceToFirebase(time, distance, trackDate)
     }
 
     fun getPolylineLength() = repository.getPolylineLength()
