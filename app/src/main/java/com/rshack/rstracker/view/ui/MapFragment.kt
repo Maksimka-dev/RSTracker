@@ -47,11 +47,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var stopwatch: Chronometer
 
-    //    private var isRunning = MediatorLiveData<Boolean>()
-
     private var trackDate: Long = 0
-
-//    private val points = mutableListOf<LatLng>()
 
     private val polyline = PolylineOptions()
         .width(5f)
@@ -66,15 +62,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
-
         viewModel.points.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
+                Log.i("my_tag", "${viewModel.getPolylineLength()}")
                 binding.tvDistance.text =
                     (round(viewModel.getPolylineLength() * 10) / 10.0).toString() + " м"
                 drawPolyline(it)
             }
         })
-
 
         binding.floatingButton.setOnClickListener {
             viewModel.changeStatus()
@@ -94,12 +89,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     //save time and distance to database
                     val time = SystemClock.elapsedRealtime() - stopwatch.base
                     val distance = viewModel.getPolylineLength()
-                    viewModel.saveTimeAndDistanceToFirebase(
-                        requireContext(),
-                        time,
-                        distance,
-                        trackDate
-                    )
+                    viewModel.save(time, distance, trackDate)
                     viewModel.clearPoints()
                     stopwatch.base = SystemClock.elapsedRealtime()
                     binding.floatingButton.setImageResource(R.drawable.ic_start)
@@ -115,7 +105,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         binding.floatingButton.setImageResource(R.drawable.ic_stop)
                         trackDate = System.currentTimeMillis()
                         startTrackerService()
-                        viewModel.subscribeToUpdates(requireContext(), trackDate)
+                        viewModel.subscribe(trackDate)
                     }
                 }
             }
@@ -204,16 +194,5 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             polyline.addAll(points)
         )
     }
-
-//    private fun polylineLength(): Float {
-//        if (viewModel.points.value!!.size <= 1) {
-//            return 0f
-//        }
-//        return viewModel.points.value!!.zipWithNext { a, b ->
-//            val results = FloatArray(1)
-//            Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, results)
-//            results[0]
-//        }.sum()
-//    }
 
 }
