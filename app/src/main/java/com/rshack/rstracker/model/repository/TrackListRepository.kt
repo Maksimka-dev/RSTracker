@@ -3,6 +3,7 @@ package com.rshack.rstracker.model.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -16,7 +17,7 @@ class TrackListRepository : ITrackListRepository {
 
     override suspend fun load(): LiveData<List<Track>> = withContext(Dispatchers.Main) {
         val tracks = MutableLiveData<List<Track>>()
-        val path = "locations"
+        val path = "locations_" + FirebaseAuth.getInstance().currentUser?.uid
         val ref =
             FirebaseDatabase.getInstance().getReference(path)
         ref.addValueEventListener(object : ValueEventListener {

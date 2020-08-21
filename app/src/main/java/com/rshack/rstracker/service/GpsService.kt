@@ -14,7 +14,11 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
@@ -98,7 +102,8 @@ class GpsService : Service() {
         request.interval = 5000
         request.fastestInterval = 2500
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        val path = getString(R.string.firebase_path)
+        val path = getString(R.string.firebase_path) +
+                FirebaseAuth.getInstance().currentUser?.uid
 
         val id = getString(R.string.track_id) + trackDate
         val track = Track(id, trackDate, 0f, 0)
@@ -129,7 +134,8 @@ class GpsService : Service() {
     private val gpsListener = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val location: Location? = locationResult.lastLocation
-            val path = getString(R.string.firebase_path)
+            val path = getString(R.string.firebase_path) +
+                    FirebaseAuth.getInstance().currentUser?.uid
             val id = getString(R.string.track_id) + trackDate
             if (location != null) {
                 val locationRef = FirebaseDatabase.getInstance()
