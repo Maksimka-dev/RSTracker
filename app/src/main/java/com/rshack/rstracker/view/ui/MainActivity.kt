@@ -1,22 +1,34 @@
 package com.rshack.rstracker.view.ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.ActivityMainBinding
-import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.view.adapter.ViewPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        auth = FirebaseAuth.getInstance()
+
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                startActivity(Intent(applicationContext, LoginActivity::class.java))
+                finish()
+            }
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -29,24 +41,32 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        loginToFirebase()
-
         setContentView(binding.root)
     }
 
-    private fun loginToFirebase() {
-        // Authenticate with Firebase, and request location updates
-        val email = getString(R.string.firebase_email)
-        val password = getString(R.string.firebase_password)
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-            email, password
-        ).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d(GpsService.TAG, "firebase auth success")
-            } else {
-                Log.d(GpsService.TAG, "firebase auth failed")
-            }
-        }
+    override fun onStart() {
+        super.onStart()
+        auth.addAuthStateListener(authStateListener)
     }
 
+    override fun onStop() {
+        super.onStop()
+        auth.removeAuthStateListener(authStateListener)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.menu_btn_logout -> {
+                auth.signOut()
+                startActivity(Intent(applicationContext, LoginActivity::class.java))
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

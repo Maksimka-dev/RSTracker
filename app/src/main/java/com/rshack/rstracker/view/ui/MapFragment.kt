@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -18,6 +17,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -25,15 +25,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
-import java.util.*
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
@@ -49,13 +44,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private lateinit var stopwatch: Chronometer
-    private var isRunning = false
-
     private var trackDate: Long = 0
-
-    private val points = mutableListOf<LatLng>()
 
     private val polyline = PolylineOptions()
         .width(5f)
@@ -70,43 +61,53 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
-        binding.floatingButton.setOnClickListener {
-            if (isRunning) {
-                // TODO save in firebase
-                Log.i("how_to_get_millisec", "${SystemClock.elapsedRealtime() - stopwatch.base}")
-                Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
-                stopwatch.stop()
-
-                //save time and distance to database
-                val time = SystemClock.elapsedRealtime() - stopwatch.base
-                val distance = polylineLength()
-                saveTimeAndDistance(time, distance)
-                points.clear()
-
-                stopwatch.base = SystemClock.elapsedRealtime()
-                isRunning = false
-                binding.floatingButton.setImageResource(R.drawable.ic_start)
-
-                stopService()
-            } else {
-                //start service if permission granted
-                if (isLocationPermissionGranted()) {
-                    Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
-                    stopwatch.base = SystemClock.elapsedRealtime()
-                    stopwatch.start()
-                    binding.floatingButton.setImageResource(R.drawable.ic_stop)
-
-                    Log.d(GpsService.TAG, "service started")
-                    trackDate = System.currentTimeMillis()
-                    startTrackerService()
-                    subscribeToUpdates()
-
-                    isRunning = true
-                }
+        viewModel.points.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                binding.tvDistance.text =
+                    (round(viewModel.getPolylineLength() * 10) / 10.0).toString() + " м"
+                drawPolyline(it)
             }
+        })
+
+        binding.floatingButton.setOnClickListener {
+            viewModel.changeStatus()
         }
 
-        binding.tvDistance
+        viewModel.isRunning.observe(viewLifecycleOwner, Observer {
+            it ?: return@Observer
+            when (it) {
+                true -> {
+                    // save in firebase
+                    Log.i(
+                        "how_to_get_millisec",
+                        "${SystemClock.elapsedRealtime() - stopwatch.base}"
+                    )
+                    Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
+                    stopwatch.stop()
+                    //save time and distance to database
+                    val time = SystemClock.elapsedRealtime() - stopwatch.base
+                    val distance = viewModel.getPolylineLength()
+                    viewModel.saveIntoFirebase(time, distance, trackDate)
+                    viewModel.clearPoints()
+                    stopwatch.base = SystemClock.elapsedRealtime()
+                    binding.floatingButton.setImageResource(R.drawable.ic_start)
+                    stopService()
+                }
+                false -> {
+                    //start service if permission granted
+                    if (isLocationPermissionGranted()) {
+                        Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
+                        Log.d(GpsService.TAG, "service started")
+                        stopwatch.base = SystemClock.elapsedRealtime()
+                        stopwatch.start()
+                        binding.floatingButton.setImageResource(R.drawable.ic_stop)
+                        trackDate = System.currentTimeMillis()
+                        startTrackerService()
+                        viewModel.startNewTrack(trackDate)
+                    }
+                }
+            }
+        })
 
         return binding.root
     }
@@ -129,25 +130,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         application.stopService(Intent(application, GpsService()::class.java))
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mMap.uiSettings.isZoomControlsEnabled = true
-        mMap.setPadding(0, 0, 0, 800)
+        map = googleMap
+        map.uiSettings.isZoomControlsEnabled = true
+        map.setPadding(0, 0, 0, 800)
         if (isLocationPermissionGranted()) {
-            mMap.isMyLocationEnabled = true
-            mMap.setOnMyLocationClickListener { location ->
+            map.isMyLocationEnabled = true
+            map.setOnMyLocationClickListener { location ->
                 val latLng = LatLng(location.latitude, location.longitude)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
             }
         }
     }
@@ -187,87 +179,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun saveTimeAndDistance(time: Long, distance: Float) {
-        val path = getString(R.string.firebase_path) + "/" +
-                getString(R.string.track_id) + trackDate
-        var ref = FirebaseDatabase.getInstance().getReference("$path/time")
-        ref.setValue(time)
-        ref = FirebaseDatabase.getInstance().getReference("$path/distance")
-        ref.setValue(distance)
-    }
-
-    private fun subscribeToUpdates() {
-        val path = getString(R.string.firebase_path) + "/" +
-                getString(R.string.track_id) + trackDate
-        val ref =
-            FirebaseDatabase.getInstance().getReference(path)
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-                addPoint(dataSnapshot)
-            }
-
-            override fun onChildChanged(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-            }
-
-            override fun onChildMoved(
-                dataSnapshot: DataSnapshot,
-                previousChildName: String?
-            ) {
-            }
-
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-            override fun onCancelled(error: DatabaseError) {
-                Log.d(
-                    GpsService.TAG,
-                    "Failed to read value.",
-                    error.toException()
-                )
-            }
-        })
-    }
-
-    private fun addPoint(dataSnapshot: DataSnapshot) {
-        try {
-            val value = dataSnapshot.value as HashMap<*, *>?
-            val lat = value!!["latitude"].toString().toDouble()
-            val lng = value["longitude"].toString().toDouble()
-            val location = LatLng(lat, lng)
-            points.add(location)
-            binding.tvDistance.text = (round(polylineLength() * 10) / 10.0).toString() + " м"
-            drawPolyline()
-        } catch (e: Exception) {
-        }
-    }
-
-    private fun drawPolyline() {
+    private fun drawPolyline(points: List<LatLng>) {
         //clear map and polyline
         polyline.points.clear()
-        mMap.clear()
+        map.clear()
         //add start and end markers
-        mMap.addMarker(MarkerOptions().title("Start").position(points.first()))
+        map.addMarker(MarkerOptions().title("Start").position(points.first()))
         if (points.size > 1)
-            mMap.addMarker(MarkerOptions().title("End").position(points.last()))
+            map.addMarker(MarkerOptions().title("End").position(points.last()))
         //add polyline
-        mMap.addPolyline(
+        map.addPolyline(
             polyline.addAll(points)
         )
-    }
-
-    private fun polylineLength(): Float {
-        if (points.size <= 1) {
-            return 0f
-        }
-        return points.zipWithNext { a, b ->
-            val results = FloatArray(1)
-            Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, results)
-            results[0]
-        }.sum()
     }
 
 }
