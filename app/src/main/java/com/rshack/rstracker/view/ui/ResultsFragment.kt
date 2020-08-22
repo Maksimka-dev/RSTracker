@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -22,7 +23,6 @@ class ResultsFragment : Fragment() {
     private val viewModel: ResultsViewModel by activityViewModels()
     private var _binding: FragmentResultsBinding? = null
     private val binding get() = _binding!!
-    private val trackAdapter = TrackAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +30,10 @@ class ResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentResultsBinding.inflate(inflater, container, false)
+
+        val trackAdapter = TrackAdapter(TrackAdapter.OnClickListener {
+            Toast.makeText(context, it.date.toString(), Toast.LENGTH_SHORT).show()
+        })
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
