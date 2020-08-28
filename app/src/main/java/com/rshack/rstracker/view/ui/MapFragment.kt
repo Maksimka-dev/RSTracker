@@ -9,15 +9,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Chronometer
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -49,6 +48,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var stopwatch: Chronometer
     private var trackDate: Long = 0
 
+//    private lateinit var firebaseAuth: FirebaseAuth
+
     private val polyline = PolylineOptions()
         .width(5f)
         .color(Color.RED)
@@ -63,6 +64,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         application = requireNotNull(activity).application
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
+
+        setHasOptionsMenu(true)
+//        firebaseAuth = FirebaseAuth.getInstance()
 
         viewModel.points.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -194,6 +198,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         map.addPolyline(
             polyline.addAll(points)
         )
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_btn_logout -> {
+                // todo logout
+//                firebaseAuth.signOut()
+                viewModel.logout()
+                findNavController().navigate(R.id.action_mapFragment_to_loginFragment)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
