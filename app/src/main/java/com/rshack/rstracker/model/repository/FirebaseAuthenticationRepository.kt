@@ -2,13 +2,17 @@ package com.rshack.rstracker.model.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.Result
 import com.rshack.rstracker.TAG
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthenticationRepository : IAuthenticationRepository {
 
-    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val firebaseAuth by lazy {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        FirebaseAuth.getInstance()
+    }
 
     override fun isLoggedIn(): Boolean = firebaseAuth.currentUser != null
 

@@ -59,7 +59,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         application = requireNotNull(activity).application
         _binding = FragmentMapBinding.inflate(inflater, container, false)
