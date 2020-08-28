@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
 
 class MapViewModel : ViewModel() {
 
     private val repository: ITrackRepository = TrackRepository()
+    private val firebaseAuthenticationRepository = FirebaseAuthenticationRepository()
 
     private val _isRunning = MutableLiveData<Boolean>().apply { value = null }
     val isRunning: LiveData<Boolean>
@@ -36,4 +38,8 @@ class MapViewModel : ViewModel() {
     }
 
     fun getPolylineLength() = repository.getPolylineLength()
+
+    fun logout() {
+        firebaseAuthenticationRepository.logout()
+    }
 }

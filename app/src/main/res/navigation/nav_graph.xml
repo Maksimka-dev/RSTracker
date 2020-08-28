@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.rshack.rstracker.view.ui.LoginFragment"
+        android:label="fragment_login"
+        app:launchSingleTop="true"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.rshack.rstracker.view.ui.RegisterFragment"
+        android:label="fragment_register"
+        app:launchSingleTop="true"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.rshack.rstracker.view.ui.MapFragment"
+        android:label="MapFragment"
+        app:launchSingleTop="true"
+        app:popUpToInclusive="true">
+        <action
+            android:id="@+id/action_mapFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_mapFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.rshack.rstracker.view.ui.ResultsFragment"
+        android:label="fragment_results"
+        app:launchSingleTop="true"
+        app:popUpToInclusive="true"
+        tools:layout="@layout/fragment_results" />
+</navigation>

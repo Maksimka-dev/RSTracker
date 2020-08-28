@@ -1,72 +1,104 @@
 package com.rshack.rstracker.view.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import com.google.firebase.auth.FirebaseAuth
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.ActivityMainBinding
-import com.rshack.rstracker.view.adapter.ViewPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private lateinit var firebaseAuth: FirebaseAuth
+
+    //    private lateinit var auth: FirebaseAuth
+//    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private val navController by lazy {
+        this.findNavController(R.id.nav_host_fragment)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            if (user == null) {
-                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                finish()
+        drawerLayout = binding.drawerLayout
+
+        setupNavigationMenu()
+
+//        auth = FirebaseAuth.getInstance()
+
+//        setSupportActionBar(binding.toolbar)
+
+        binding.navView.setNavigationItemSelectedListener {
+            drawerLayout.closeDrawers()
+            when (it.itemId) {
+                R.id.nav_map_fragment -> {
+//                    if(!navController.popBackStack(R.id.mapFragment, false))
+                    navController.navigate(R.id.mapFragment)
+                }
+                R.id.nav_results_fragment -> {
+//                    if(!navController.popBackStack(R.id.resultsFragment, false))
+                    navController.navigate(R.id.resultsFragment)
+                }
             }
+            true
         }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+//        val drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+//        drawerLayout.addDrawerListener(drawerToggle)
+//        drawerToggle.syncState()
+//
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
-        binding.viewPager.adapter = ViewPagerAdapter(this)
-        binding.viewPager.isUserInputEnabled = false
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                0 -> tab.text = "Map"
-                1 -> tab.text = "Results"
+    // button back and up works the same
+    override fun onSupportNavigateUp(): Boolean {
+//        return findNavController(R.id.nav_host_fragment).navigateUp()
+        return NavigationUI.navigateUp(navController, drawerLayout)
+    }
+
+    private fun setupNavigationMenu() {
+        navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
+            if (nd.id == nc.graph.startDestination || nd.id == R.id.registerFragment) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            } else {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }
-        }.attach()
-
-        setContentView(binding.root)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        auth.addAuthStateListener(authStateListener)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        auth.removeAuthStateListener(authStateListener)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        }
+        // turn on left menu
+//        binding.navView.setupWithNavController(navController)
+//        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.menu_btn_logout -> {
-                auth.signOut()
-                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                finish()
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 }
