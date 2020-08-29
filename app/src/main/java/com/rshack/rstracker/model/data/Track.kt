@@ -8,5 +8,6 @@ data class Track(
     val id: String,
     val date: Long,
     val distance: Float,
-    val time: Long
+    val time: Long,
+    var imgUrl: String = ""
 ) : Parcelable

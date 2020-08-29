@@ -56,7 +56,7 @@ class ResultsFragment : Fragment() {
 
         viewModel.tracks.observe(viewLifecycleOwner, Observer {
             it ?: return@Observer
-            trackAdapter.addItems(it)
+            trackAdapter.submitList(it)
         })
 
         return binding.root

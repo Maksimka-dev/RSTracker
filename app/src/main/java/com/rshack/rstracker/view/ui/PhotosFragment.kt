@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.rshack.rstracker.databinding.FragmentPhotosBinding
 import com.rshack.rstracker.view.adapter.PhotosAdapter
@@ -26,14 +24,19 @@ class PhotosFragment : Fragment() {
     ): View? {
         application = requireNotNull(activity).application
         val binding = FragmentPhotosBinding.inflate(inflater)
+
+        val track = PhotosFragmentArgs.fromBundle(requireArguments())
+            .selectedTrack
+
         binding.photoGrid.adapter = PhotosAdapter(PhotosAdapter.OnClickListener{
+            viewModel.onPhotoClicked(it, track)
             this.findNavController().navigate(PhotosFragmentDirections.actionShowResults())
         })
 
-        viewModel.photos.observe(viewLifecycleOwner, Observer {
+        viewModel.photos.observe(viewLifecycleOwner) {
             val adapter = binding.photoGrid.adapter as PhotosAdapter
             adapter.submitList(it)
-        })
+        }
 
         return binding.root
     }

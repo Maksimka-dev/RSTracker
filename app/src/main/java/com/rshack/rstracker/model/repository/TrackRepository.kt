@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.TAG
+import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.service.GpsService
 
 class TrackRepository : ITrackRepository {
@@ -99,5 +100,12 @@ class TrackRepository : ITrackRepository {
         ref.setValue(time)
         ref = FirebaseDatabase.getInstance().getReference("$path/distance")
         ref.setValue(distance)
+    }
+
+    override fun updateTrack(track: Track) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val path = "locations_$uid/${track.id}"
+        val ref = FirebaseDatabase.getInstance().getReference(path)
+        ref.setValue(track)
     }
 }

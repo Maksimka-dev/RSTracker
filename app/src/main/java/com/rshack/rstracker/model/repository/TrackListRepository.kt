@@ -27,14 +27,17 @@ class TrackListRepository : ITrackListRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("Count ", "" + snapshot.childrenCount)
 
-                tracks.value = snapshot.children.map { snap ->
-                    val value = snap.value as HashMap<*, *>?
-                    val id = value!!["id"].toString()
-                    val time = value["time"].toString().toLong()
-                    val distance = value["distance"].toString().toFloat()
-                    val date = value["date"].toString().toLong()
-                    Track(id, date, distance, time)
-                }
+                tracks.value = snapshot.children
+                    .reversed()
+                    .map { snap ->
+                        val value = snap.value as HashMap<*, *>?
+                        val id = value!!["id"].toString()
+                        val time = value["time"].toString().toLong()
+                        val distance = value["distance"]?.toString()?.toFloat() ?: 0f
+                        val date = value["date"].toString().toLong()
+                        val imgUrl = value["imgUrl"]?.toString() ?: ""
+                        Track(id, date, distance, time, imgUrl)
+                    }
             }
         })
         return@withContext tracks

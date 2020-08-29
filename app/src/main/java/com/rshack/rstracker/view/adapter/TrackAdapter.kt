@@ -1,9 +1,10 @@
 package com.rshack.rstracker.view.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
@@ -14,12 +15,7 @@ import kotlin.math.round
 class TrackAdapter(
     private val onDetailClickListener: OnDetailClickListener,
     private val onImageClickListener: OnImageClickListener
-) :
-    RecyclerView.Adapter<ViewHolder>() {
-
-    private val items = mutableListOf<Track>()
-
-    override fun getItemCount(): Int = items.size
+) : ListAdapter<Track, ViewHolder>(TrackDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
@@ -29,15 +25,7 @@ class TrackAdapter(
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    fun addItems(newItems: List<Track>) {
-        val diffCallback = TrackDiffCallback(items, newItems)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        items.clear()
-        items.addAll(newItems)
-        diffResult.dispatchUpdatesTo(this)
+        holder.bind(getItem(holder.adapterPosition))
     }
 
     class OnDetailClickListener(val clickListener: (track: Track) -> Unit) {
@@ -56,6 +44,7 @@ class ViewHolder(
 ) :
     RecyclerView.ViewHolder(itemView) {
 
+    @SuppressLint("SetTextI18n")
     fun bind(track: Track) {
         itemView.apply {
             detailLayout.setOnClickListener {
@@ -64,6 +53,9 @@ class ViewHolder(
             imageView.setOnClickListener {
                 onImageClickListener.onClick(track)
             }
+            val url = track.imgUrl
+            if (url.isNotEmpty()) bindImage(imageView, url) else imageView
+                .setImageResource(R.drawable.ic_baseline_directions_run_24)
             tv_date.text = DateFormat.getInstance().format(track.date)
             tv_distance.text = (round(track.distance * 100) / 100.0).toString() + " m"
             tv_time.text = (track.time / 1000).toString() + " c"
