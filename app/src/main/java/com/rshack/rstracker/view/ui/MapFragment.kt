@@ -3,7 +3,6 @@ package com.rshack.rstracker.view.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -30,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.rshack.rstracker.R
+import com.rshack.rstracker.TAG
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
@@ -53,8 +53,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var stopwatch: Chronometer
     private var trackDate: Long = 0
 
-//    private lateinit var firebaseAuth: FirebaseAuth
-
     private val polyline = PolylineOptions()
         .width(POLYLINE_WIDTH)
         .color(Color.RED)
@@ -68,9 +66,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         application = requireNotNull(activity).application
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
-
-        setHasOptionsMenu(true)
-//        firebaseAuth = FirebaseAuth.getInstance()
 
         viewModel.points.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -87,40 +82,40 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.isRunning.observe(viewLifecycleOwner, Observer {
             it ?: return@Observer
             when (it) {
-                true -> {
-                    // save in firebase
-                    Log.i(
-                        "how_to_get_millisec",
-                        "${SystemClock.elapsedRealtime() - stopwatch.base}"
-                    )
-                    Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
-                    stopwatch.stop()
-                    // save time and distance to database
-                    val time = SystemClock.elapsedRealtime() - stopwatch.base
-                    val distance = viewModel.getPolylineLength()
-                    viewModel.saveIntoFirebase(time, distance, trackDate)
-                    viewModel.clearPoints()
-                    stopwatch.base = SystemClock.elapsedRealtime()
-                    binding.floatingButton.setImageResource(R.drawable.ic_start)
-                    stopService()
-                }
-                false -> {
-                    // start service if permission granted
-                    if (isLocationPermissionGranted()) {
-                        Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
-                        Log.d(GpsService.TAG, "service started")
-                        stopwatch.base = SystemClock.elapsedRealtime()
-                        stopwatch.start()
-                        binding.floatingButton.setImageResource(R.drawable.ic_stop)
-                        trackDate = System.currentTimeMillis()
-                        startTrackerService()
-                        viewModel.startNewTrack(trackDate)
-                    }
-                }
+                true -> stopTracking()
+                false -> if (isLocationPermissionGranted()) startTracking()
             }
         })
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    private fun startTracking() {
+        Log.d(GpsService.TAG, "service started")
+        Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
+        stopwatch.base = SystemClock.elapsedRealtime()
+        stopwatch.start()
+        binding.floatingButton.setImageResource(R.drawable.ic_stop)
+        trackDate = System.currentTimeMillis()
+        viewModel.startService(trackDate)
+        viewModel.startNewTrack(trackDate)
+    }
+
+    private fun stopTracking() {
+        Log.i(TAG, "${SystemClock.elapsedRealtime() - stopwatch.base}")
+        Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
+        stopwatch.stop()
+        // save time and distance to database
+        val time = SystemClock.elapsedRealtime() - stopwatch.base
+        val distance = viewModel.getPolylineLength()
+        viewModel.saveIntoFirebase(time, distance, trackDate)
+        viewModel.clearPoints()
+        stopwatch.base = SystemClock.elapsedRealtime()
+        binding.floatingButton.setImageResource(R.drawable.ic_start)
+//        viewModel.clearIsRunning()
+        viewModel.stopService()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -133,12 +128,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopService()
+        viewModel.stopService()
         _binding = null
-    }
-
-    private fun stopService() {
-        application.stopService(Intent(application, GpsService()::class.java))
     }
 
     @SuppressLint("MissingPermission")
@@ -153,12 +144,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
             }
         }
-    }
-
-    private fun startTrackerService() {
-        val intent = Intent(application, GpsService()::class.java)
-        intent.putExtra(GpsService.TRACK_DATE, trackDate)
-        application.startService(intent)
     }
 
     private fun isLocationPermissionGranted(): Boolean {
@@ -186,7 +171,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             // Start the service when the permission is granted
-            startTrackerService()
+            // todo !!!
+            viewModel.startService(trackDate)
         }
     }
 
@@ -212,8 +198,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_btn_logout -> {
-                // todo logout
-//                firebaseAuth.signOut()
                 viewModel.logout()
                 findNavController().navigate(R.id.action_mapFragment_to_loginFragment)
             }
