@@ -33,7 +33,7 @@ class ResultsFragment : Fragment() {
         _binding = FragmentResultsBinding.inflate(inflater, container, false)
 
         val detailClickListener = TrackAdapter.OnDetailClickListener {
-            Toast.makeText(context, it.date.toString(), Toast.LENGTH_SHORT).show()
+            viewModel.displayMapFragment(it)
         }
         val imageClickListener = TrackAdapter.OnImageClickListener {
             viewModel.displayPhotoFragment(it)
@@ -43,6 +43,13 @@ class ResultsFragment : Fragment() {
             if (it != null) {
                 this.findNavController().navigate(ResultsFragmentDirections.actionShowPhotos(it))
                 viewModel.displayPhotoFragmentComplete()
+            }
+        }
+
+        viewModel.navigateToMapFragment.observe(viewLifecycleOwner) {
+            if (it != null) {
+                this.findNavController().navigate(ResultsFragmentDirections.actionShowMap(it))
+                viewModel.displayMapFragmentComplete()
             }
         }
 

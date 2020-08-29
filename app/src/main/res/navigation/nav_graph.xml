@@ -37,6 +37,12 @@
         android:label="MapFragment"
         app:launchSingleTop="true"
         app:popUpToInclusive="true">
+        <argument
+            android:name="selectedTrack"
+            app:argType="com.rshack.rstracker.model.data.Track"
+            app:nullable="true"
+            android:defaultValue="@null"
+            />
         <action
             android:id="@+id/action_mapFragment_to_resultsFragment"
             app:destination="@id/resultsFragment"
@@ -59,6 +65,9 @@
         <action
             android:id="@+id/actionShowPhotos"
             app:destination="@id/photosFragment" />
+        <action
+            android:id="@+id/actionShowMap"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/photosFragment"

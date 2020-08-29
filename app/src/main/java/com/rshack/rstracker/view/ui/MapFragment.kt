@@ -67,6 +67,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
+        val track = MapFragmentArgs.fromBundle(requireArguments()).selectedTrack
+
+        Toast.makeText(application, track?.id ?: "null", Toast.LENGTH_SHORT).show()
+
         viewModel.points.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 binding.tvDistance.text =

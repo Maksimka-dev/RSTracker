@@ -19,6 +19,10 @@ class ResultsViewModel : ViewModel() {
     val navigateToPhotoFragment: LiveData<Track>
         get() = _navigateToPhotoFragment
 
+    private val _navigateToMapFragment = MutableLiveData<Track>()
+    val navigateToMapFragment: LiveData<Track>
+        get() = _navigateToMapFragment
+
     private val repository: ITrackListRepository = TrackListRepository()
 
     init {
@@ -34,5 +38,13 @@ class ResultsViewModel : ViewModel() {
 
     fun displayPhotoFragmentComplete() {
         _navigateToPhotoFragment.value = null
+    }
+
+    fun displayMapFragment(track: Track) {
+        _navigateToMapFragment.value = track
+    }
+
+    fun displayMapFragmentComplete() {
+        _navigateToMapFragment.value = null
     }
 }
