@@ -28,5 +28,4 @@ class LoginViewModel : ViewModel() {
     fun clearAuthResult() {
         _authResult.value = null
     }
-
 }

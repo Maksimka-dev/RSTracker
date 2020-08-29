@@ -10,8 +10,8 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.rshack.rstracker.TAG
 import com.rshack.rstracker.service.GpsService
-import java.util.*
 
 class TrackRepository : ITrackRepository {
 
@@ -54,15 +54,20 @@ class TrackRepository : ITrackRepository {
                 dataSnapshot: DataSnapshot,
                 previousChildName: String?
             ) {
+                return
             }
 
             override fun onChildMoved(
                 dataSnapshot: DataSnapshot,
                 previousChildName: String?
             ) {
+                return
             }
 
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                return
+            }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.d(
                     GpsService.TAG,
@@ -83,6 +88,7 @@ class TrackRepository : ITrackRepository {
             list?.add(location)
             points.value = list
         } catch (e: Exception) {
+            Log.i(TAG, "add point error")
         }
     }
 
@@ -94,5 +100,4 @@ class TrackRepository : ITrackRepository {
         ref = FirebaseDatabase.getInstance().getReference("$path/distance")
         ref.setValue(distance)
     }
-
 }

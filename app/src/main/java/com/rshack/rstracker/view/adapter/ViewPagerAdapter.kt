@@ -14,5 +14,4 @@ class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activ
         0 -> MapFragment.newInstance()
         else -> ResultsFragment.newInstance()
     }
-
 }

@@ -11,7 +11,6 @@ import com.google.firebase.database.ValueEventListener
 import com.rshack.rstracker.model.data.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class TrackListRepository : ITrackListRepository {
 
@@ -37,9 +36,7 @@ class TrackListRepository : ITrackListRepository {
                     Track(id, date, distance, time)
                 }
             }
-
         })
         return@withContext tracks
     }
-
 }

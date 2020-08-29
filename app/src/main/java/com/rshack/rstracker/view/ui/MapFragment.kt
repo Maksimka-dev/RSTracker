@@ -9,7 +9,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Chronometer
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -24,7 +29,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.service.GpsService
@@ -32,6 +36,7 @@ import com.rshack.rstracker.viewmodel.MapViewModel
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
+private const val POLYLINE_WIDTH = 5f
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -51,7 +56,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 //    private lateinit var firebaseAuth: FirebaseAuth
 
     private val polyline = PolylineOptions()
-        .width(5f)
+        .width(POLYLINE_WIDTH)
         .color(Color.RED)
 
     override fun onCreateView(
@@ -90,7 +95,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     )
                     Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
                     stopwatch.stop()
-                    //save time and distance to database
+                    // save time and distance to database
                     val time = SystemClock.elapsedRealtime() - stopwatch.base
                     val distance = viewModel.getPolylineLength()
                     viewModel.saveIntoFirebase(time, distance, trackDate)
@@ -100,7 +105,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     stopService()
                 }
                 false -> {
-                    //start service if permission granted
+                    // start service if permission granted
                     if (isLocationPermissionGranted()) {
                         Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
                         Log.d(GpsService.TAG, "service started")
@@ -186,14 +191,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun drawPolyline(points: List<LatLng>) {
-        //clear map and polyline
+        // clear map and polyline
         polyline.points.clear()
         map.clear()
-        //add start and end markers
+        // add start and end markers
         map.addMarker(MarkerOptions().title("Start").position(points.first()))
         if (points.size > 1)
             map.addMarker(MarkerOptions().title("End").position(points.last()))
-        //add polyline
+        // add polyline
         map.addPolyline(
             polyline.addAll(points)
         )
@@ -215,5 +220,4 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

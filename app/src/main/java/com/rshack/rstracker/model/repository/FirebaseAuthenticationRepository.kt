@@ -31,7 +31,6 @@ class FirebaseAuthenticationRepository : IAuthenticationRepository {
             Result.Error(e)
         }
 
-
     override suspend fun register(email: String, password: String): Result<String?> =
         try {
             val user = firebaseAuth.createUserWithEmailAndPassword(email, password).await().user
@@ -63,5 +62,4 @@ class FirebaseAuthenticationRepository : IAuthenticationRepository {
 //        } catch (e: Exception) {
 //            Result.Error(e)
 //        }
-
 }

@@ -1,7 +1,11 @@
 package com.rshack.rstracker.service
 
 import android.Manifest
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -23,6 +27,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
 
+private const val GPS_REQUEST_INTERVAL = 5000L
+private const val GPS_REQUEST_FASTEST_INTERVAL = 2500L
+
 class GpsService : Service() {
 
     private var trackDate: Long = 0
@@ -30,7 +37,6 @@ class GpsService : Service() {
     private val client by lazy {
         LocationServices.getFusedLocationProviderClient(this)
     }
-
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -99,8 +105,8 @@ class GpsService : Service() {
 
     private fun requestLocationUpdates() {
         val request = LocationRequest()
-        request.interval = 5000
-        request.fastestInterval = 2500
+        request.interval = GPS_REQUEST_INTERVAL
+        request.fastestInterval = GPS_REQUEST_FASTEST_INTERVAL
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         val path = getString(R.string.firebase_path) +
                 FirebaseAuth.getInstance().currentUser?.uid

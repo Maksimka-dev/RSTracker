@@ -22,5 +22,4 @@ class ResultsViewModel : ViewModel() {
             _tracks = repository.load()
         }
     }
-
 }
