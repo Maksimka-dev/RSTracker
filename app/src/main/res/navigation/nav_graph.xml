@@ -55,5 +55,23 @@
         android:label="fragment_results"
         app:launchSingleTop="true"
         app:popUpToInclusive="true"
-        tools:layout="@layout/fragment_results" />
+        tools:layout="@layout/fragment_results" >
+        <action
+            android:id="@+id/actionShowPhotos"
+            app:destination="@id/photosFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photosFragment"
+        android:name="com.rshack.rstracker.view.ui.PhotosFragment"
+        android:label="fragment_photos"
+        tools:layout="@layout/fragment_photos" >
+        <argument
+            android:name="selectedTrack"
+            app:argType="com.rshack.rstracker.model.data.Track"
+            />
+        <action
+            android:id="@+id/actionShowResults"
+            app:destination="@id/resultsFragment"
+            app:popUpTo="@id/mapFragment"/>
+    </fragment>
 </navigation>

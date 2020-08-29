@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rshack.rstracker.databinding.FragmentResultsBinding
@@ -31,9 +32,21 @@ class ResultsFragment : Fragment() {
     ): View? {
         _binding = FragmentResultsBinding.inflate(inflater, container, false)
 
-        val trackAdapter = TrackAdapter(TrackAdapter.OnClickListener {
+        val detailClickListener = TrackAdapter.OnDetailClickListener {
             Toast.makeText(context, it.date.toString(), Toast.LENGTH_SHORT).show()
-        })
+        }
+        val imageClickListener = TrackAdapter.OnImageClickListener {
+            viewModel.displayPhotoFragment(it)
+        }
+
+        viewModel.navigateToPhotoFragment.observe(viewLifecycleOwner) {
+            if (it != null) {
+                this.findNavController().navigate(ResultsFragmentDirections.actionShowPhotos(it))
+                viewModel.displayPhotoFragmentComplete()
+            }
+        }
+
+        val trackAdapter = TrackAdapter(detailClickListener, imageClickListener)
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)

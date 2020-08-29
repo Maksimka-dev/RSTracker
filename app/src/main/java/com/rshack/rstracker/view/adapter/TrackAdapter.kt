@@ -11,7 +11,10 @@ import kotlinx.android.synthetic.main.recycler_view_item.view.*
 import java.text.DateFormat
 import kotlin.math.round
 
-class TrackAdapter(private val onClickListener: OnClickListener) :
+class TrackAdapter(
+    private val onDetailClickListener: OnDetailClickListener,
+    private val onImageClickListener: OnImageClickListener
+) :
     RecyclerView.Adapter<ViewHolder>() {
 
     private val items = mutableListOf<Track>()
@@ -20,8 +23,9 @@ class TrackAdapter(private val onClickListener: OnClickListener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item, parent, false),
-            onClickListener
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.recycler_view_item, parent, false),
+            onDetailClickListener, onImageClickListener
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -36,22 +40,33 @@ class TrackAdapter(private val onClickListener: OnClickListener) :
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class OnClickListener(val clickListener: (track: Track) -> Unit) {
+    class OnDetailClickListener(val clickListener: (track: Track) -> Unit) {
+        fun onClick(track: Track) = clickListener(track)
+    }
+
+    class OnImageClickListener(val clickListener: (track: Track) -> Unit) {
         fun onClick(track: Track) = clickListener(track)
     }
 }
 
-class ViewHolder(itemView: View, private val onClickListener: TrackAdapter.OnClickListener) :
+class ViewHolder(
+    itemView: View,
+    private val onDetailClickListener: TrackAdapter.OnDetailClickListener,
+    private val onImageClickListener: TrackAdapter.OnImageClickListener
+) :
     RecyclerView.ViewHolder(itemView) {
 
     fun bind(track: Track) {
         itemView.apply {
-            setOnClickListener {
-                onClickListener.onClick(track)
+            detailLayout.setOnClickListener {
+                onDetailClickListener.onClick(track)
+            }
+            imageView.setOnClickListener {
+                onImageClickListener.onClick(track)
             }
             tv_date.text = DateFormat.getInstance().format(track.date)
-            tv_distance.text = (round(track.distance * 100) / 100.0).toString()
-            tv_time.text = (track.time / 1000).toString() + " с"
+            tv_distance.text = (round(track.distance * 100) / 100.0).toString() + " m"
+            tv_time.text = (track.time / 1000).toString() + " c"
         }
     }
 }

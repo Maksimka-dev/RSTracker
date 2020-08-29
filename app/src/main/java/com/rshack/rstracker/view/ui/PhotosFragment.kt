@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.rshack.rstracker.databinding.FragmentPhotosBinding
 import com.rshack.rstracker.view.adapter.PhotosAdapter
 import com.rshack.rstracker.viewmodel.PhotosViewModel
@@ -26,7 +27,7 @@ class PhotosFragment : Fragment() {
         application = requireNotNull(activity).application
         val binding = FragmentPhotosBinding.inflate(inflater)
         binding.photoGrid.adapter = PhotosAdapter(PhotosAdapter.OnClickListener{
-            Toast.makeText(application, "click", Toast.LENGTH_SHORT).show()
+            this.findNavController().navigate(PhotosFragmentDirections.actionShowResults())
         })
 
         viewModel.photos.observe(viewLifecycleOwner, Observer {
