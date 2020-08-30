@@ -36,7 +36,6 @@ import com.rshack.rstracker.viewmodel.MapViewModel
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
-private const val POLYLINE_WIDTH = 5f
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -53,10 +52,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var stopwatch: Chronometer
     private var trackDate: Long = 0
 
-    private val polyline = PolylineOptions()
-        .width(POLYLINE_WIDTH)
-        .color(Color.RED)
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,29 +62,35 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
+        //selected track from ResultsFragment
         val track = MapFragmentArgs.fromBundle(requireArguments()).selectedTrack
 
         Toast.makeText(application, track?.id ?: "null", Toast.LENGTH_SHORT).show()
 
-        viewModel.points.observe(viewLifecycleOwner, Observer {
+        viewModel.points.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                binding.tvDistance.text =
-                    (round(viewModel.getPolylineLength() * 10) / 10.0).toString() + " м"
-                drawPolyline(it)
+                viewModel.updateDistance()
+                viewModel.updatePolyline(it, map)
             }
-        })
+        }
+
+        viewModel.distance.observe(viewLifecycleOwner) {
+            val distance = (round(it * 10) / 10.0).toString()
+            binding.tvDistance.text =  getString(R.string.distance, distance)
+        }
 
         binding.floatingButton.setOnClickListener {
             viewModel.changeStatus()
         }
 
-        viewModel.isRunning.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
-            when (it) {
-                true -> stopTracking()
-                false -> if (isLocationPermissionGranted()) startTracking()
+        viewModel.isRunning.observe(viewLifecycleOwner) {
+            it ?: return@observe
+            if (it) {
+                stopTracking()
+            } else {
+                if (isLocationPermissionGranted()) startTracking()
             }
-        })
+        }
 
         setHasOptionsMenu(true)
 
@@ -97,7 +98,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun startTracking() {
-        Log.d(GpsService.TAG, "service started")
         Toast.makeText(context, "Start tracking", Toast.LENGTH_SHORT).show()
         stopwatch.base = SystemClock.elapsedRealtime()
         stopwatch.start()
@@ -108,17 +108,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun stopTracking() {
-        Log.i(TAG, "${SystemClock.elapsedRealtime() - stopwatch.base}")
         Toast.makeText(context, "Stop tracking", Toast.LENGTH_SHORT).show()
         stopwatch.stop()
         // save time and distance to database
         val time = SystemClock.elapsedRealtime() - stopwatch.base
-        val distance = viewModel.getPolylineLength()
-        viewModel.saveIntoFirebase(time, distance, trackDate)
+        viewModel.saveIntoFirebase(time, viewModel.distance.value ?: 0f, trackDate)
         viewModel.clearPoints()
-        stopwatch.base = SystemClock.elapsedRealtime()
         binding.floatingButton.setImageResource(R.drawable.ic_start)
-//        viewModel.clearIsRunning()
         viewModel.stopService()
     }
 
@@ -140,7 +136,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.uiSettings.isZoomControlsEnabled = true
-        map.setPadding(0, 0, 0, 800)
+        map.setPadding(0, 0, 0, 400)
         if (isLocationPermissionGranted()) {
             map.isMyLocationEnabled = true
             map.setOnMyLocationClickListener { location ->
@@ -178,20 +174,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             // todo !!!
             viewModel.startService(trackDate)
         }
-    }
-
-    private fun drawPolyline(points: List<LatLng>) {
-        // clear map and polyline
-        polyline.points.clear()
-        map.clear()
-        // add start and end markers
-        map.addMarker(MarkerOptions().title("Start").position(points.first()))
-        if (points.size > 1)
-            map.addMarker(MarkerOptions().title("End").position(points.last()))
-        // add polyline
-        map.addPolyline(
-            polyline.addAll(points)
-        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

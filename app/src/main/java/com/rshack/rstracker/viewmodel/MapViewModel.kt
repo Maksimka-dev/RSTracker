@@ -2,15 +2,20 @@ package com.rshack.rstracker.viewmodel
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
 import com.rshack.rstracker.service.GpsService
+
+private const val POLYLINE_WIDTH = 10f
 
 class MapViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,8 +28,16 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val isRunning: LiveData<Boolean>
         get() = _isRunning
 
+    private val _distance = MutableLiveData<Float>()
+    val distance: LiveData<Float>
+        get() = _distance
+
     val points: LiveData<List<LatLng>>
         get() = repository.getCoordinates()
+
+    private val polyline = PolylineOptions()
+        .width(POLYLINE_WIDTH)
+        .color(Color.RED)
 
     fun changeStatus() {
         if (_isRunning.value == null) _isRunning.value = false
@@ -44,7 +57,9 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         repository.saveTimeAndDistanceToFirebase(time, distance, trackDate)
     }
 
-    fun getPolylineLength() = repository.getPolylineLength()
+    fun updateDistance() {
+        _distance.value = repository.getPolylineLength()
+    }
 
     fun logout() {
         firebaseAuthenticationRepository.logout()
@@ -58,5 +73,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         val intent = Intent(_application, GpsService()::class.java)
         intent.putExtra(GpsService.TRACK_DATE, trackDate)
         _application.startService(intent)
+    }
+
+    fun updatePolyline(points: List<LatLng>, map: GoogleMap) {
+        // clear map and polyline
+        polyline.points.clear()
+        map.clear()
+        // add start and end markers
+        map.addMarker(MarkerOptions().title("Start").position(points.first()))
+        if (points.size > 1)
+            map.addMarker(MarkerOptions().title("End").position(points.last()))
+        // add polyline
+        map.addPolyline(
+            polyline.addAll(points)
+        )
     }
 }
