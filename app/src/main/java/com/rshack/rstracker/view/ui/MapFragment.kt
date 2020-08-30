@@ -4,10 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,19 +17,15 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.LatLngBounds
 import com.rshack.rstracker.R
-import com.rshack.rstracker.TAG
 import com.rshack.rstracker.databinding.FragmentMapBinding
-import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
 import kotlin.math.round
 
@@ -62,15 +56,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
-        //selected track from ResultsFragment
-        val track = MapFragmentArgs.fromBundle(requireArguments()).selectedTrack
-
-        Toast.makeText(application, track?.id ?: "null", Toast.LENGTH_SHORT).show()
-
-        viewModel.points.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
+        viewModel.clearPoints()
+        viewModel.points.observe(viewLifecycleOwner) { list ->
+            if (list.isNotEmpty()) {
                 viewModel.updateDistance()
-                viewModel.updatePolyline(it, map)
+                viewModel.updatePolyline(map)
             }
         }
 
@@ -143,6 +133,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val latLng = LatLng(location.latitude, location.longitude)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
             }
+        }
+
+        //selected track from ResultsFragment
+        val track = MapFragmentArgs.fromBundle(requireArguments()).selectedTrack
+        if (track != null) {
+            viewModel.showTrack(track)
+            binding.stopwatch.base = SystemClock.elapsedRealtime() - track.time
         }
     }
 

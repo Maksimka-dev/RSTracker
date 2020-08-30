@@ -25,8 +25,6 @@ class TrackListRepository : ITrackListRepository {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("Count ", "" + snapshot.childrenCount)
-
                 tracks.value = snapshot.children
                     .reversed()
                     .map { snap ->

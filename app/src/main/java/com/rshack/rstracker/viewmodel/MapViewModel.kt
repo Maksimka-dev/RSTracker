@@ -10,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
@@ -32,8 +33,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val distance: LiveData<Float>
         get() = _distance
 
-    val points: LiveData<List<LatLng>>
-        get() = repository.getCoordinates()
+    val points: MutableLiveData<List<LatLng>> = repository.getCoordinates()
 
     private val polyline = PolylineOptions()
         .width(POLYLINE_WIDTH)
@@ -75,17 +75,23 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         _application.startService(intent)
     }
 
-    fun updatePolyline(points: List<LatLng>, map: GoogleMap) {
+    fun updatePolyline(map: GoogleMap) {
         // clear map and polyline
         polyline.points.clear()
         map.clear()
-        // add start and end markers
-        map.addMarker(MarkerOptions().title("Start").position(points.first()))
-        if (points.size > 1)
-            map.addMarker(MarkerOptions().title("End").position(points.last()))
+        val pointList = points.value ?: listOf()
+        if (pointList.isEmpty()) return
+        map.addMarker(MarkerOptions().title("Start").position(pointList.first()))
+        if (pointList.size > 1)
+            map.addMarker(MarkerOptions().title("End").position(pointList.last()))
         // add polyline
         map.addPolyline(
-            polyline.addAll(points)
+            polyline.addAll(pointList)
         )
+    }
+
+    fun showTrack(track: Track) {
+        repository.getCoordinates(track)
+        _distance.value = track.distance
     }
 }

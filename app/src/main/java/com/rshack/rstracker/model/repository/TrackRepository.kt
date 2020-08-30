@@ -6,10 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.rshack.rstracker.TAG
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.service.GpsService
@@ -19,8 +16,31 @@ class TrackRepository : ITrackRepository {
     private val points = MutableLiveData<List<LatLng>>()
         .apply { value = listOf() }
 
-    override fun getCoordinates(): LiveData<List<LatLng>> {
+    override fun getCoordinates(): MutableLiveData<List<LatLng>> {
         return points
+    }
+
+    override fun getCoordinates(track: Track) {
+        val path = "locations_" +
+            FirebaseAuth.getInstance().currentUser?.uid + "/${track.id}"
+        val ref = FirebaseDatabase.getInstance().getReference(path)
+
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                points.value = snapshot.children
+                    .filter { it.hasChildren() }
+                    .map {point ->
+                        val value = point.value as HashMap<*, *>?
+                        val lat = value!!["latitude"].toString().toDouble()
+                        val lng = value["longitude"].toString().toDouble()
+                        LatLng(lat, lng)
+                    }
+            }
+        })
     }
 
     override fun clearCoordinates() {
@@ -39,6 +59,7 @@ class TrackRepository : ITrackRepository {
     }
 
     override fun subscribeToUpdates(trackDate: Long) {
+        clearCoordinates()
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val path = "locations_$uid/track$trackDate"
         val ref =

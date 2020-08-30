@@ -1,11 +1,13 @@
 package com.rshack.rstracker.model.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.rshack.rstracker.model.data.Track
 
 interface ITrackRepository {
-    fun getCoordinates(): LiveData<List<LatLng>>
+    fun getCoordinates(): MutableLiveData<List<LatLng>>
+    fun getCoordinates(track: Track)
     fun clearCoordinates()
     fun getPolylineLength(): Float
     fun subscribeToUpdates(trackDate: Long)
