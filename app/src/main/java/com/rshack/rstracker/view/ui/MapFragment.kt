@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Chronometer
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,10 +25,11 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.rshack.rstracker.R
+import com.rshack.rstracker.TAG
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.viewmodel.MapViewModel
+import kotlinx.android.synthetic.main.nav_header.*
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
@@ -56,6 +59,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
 
+        viewModel.getEmail()
         viewModel.clearPoints()
         viewModel.points.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
@@ -66,7 +70,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.distance.observe(viewLifecycleOwner) {
             val distance = (round(it * 10) / 10.0).toString()
-            binding.tvDistance.text =  getString(R.string.distance, distance)
+            binding.tvDistance.text = getString(R.string.distance, distance)
         }
 
         binding.floatingButton.setOnClickListener {
@@ -82,9 +86,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
+//        viewModel.emailLogIn.observe(viewLifecycleOwner) {
+//            it ?: return@observe
+//            Log.d(TAG, it)
+//            textView.text = it
+//            Log.d(TAG, it)
+//        }
+
         setHasOptionsMenu(true)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        viewModel.getEmail()
+        viewModel.emailLogIn.observe(viewLifecycleOwner) {
+            it ?: return@observe
+            Log.d(TAG, it)
+            view.findViewById<TextView>(R.id.nav_tv_email).text = it
+            Log.d(TAG, it)
+        }
     }
 
     private fun startTracking() {

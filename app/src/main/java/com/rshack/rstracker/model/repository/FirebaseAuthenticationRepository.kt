@@ -14,7 +14,7 @@ class FirebaseAuthenticationRepository : IAuthenticationRepository {
         FirebaseAuth.getInstance()
     }
 
-    override fun isLoggedIn(): Boolean = firebaseAuth.currentUser != null
+    override fun getCurrentUserEmail(): String? = firebaseAuth.currentUser?.email
 
     override suspend fun login(email: String, password: String): Result<String?> =
         try {
