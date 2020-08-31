@@ -3,6 +3,7 @@ package com.rshack.rstracker.view.ui
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -53,6 +54,9 @@ class MainActivity : AppCompatActivity() {
 //                    if(!navController.popBackStack(R.id.resultsFragment, false))
                     navController.navigate(R.id.resultsFragment)
                 }
+                R.id.nav_night_mode -> {
+                    setTheme()
+                }
             }
             true
         }
@@ -62,6 +66,15 @@ class MainActivity : AppCompatActivity() {
 //        drawerToggle.syncState()
 //
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setTheme() {
+//        val modeType = AppCompatDelegate.getDefaultNightMode()
+//        Log.d(com.rshack.rstracker.TAG, "$modeType")
+//        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        else
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     // button back and up works the same
