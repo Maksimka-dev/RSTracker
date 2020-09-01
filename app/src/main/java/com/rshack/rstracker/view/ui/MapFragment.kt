@@ -17,9 +17,14 @@ import android.widget.Chronometer
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -29,7 +34,6 @@ import com.rshack.rstracker.R
 import com.rshack.rstracker.TAG
 import com.rshack.rstracker.databinding.FragmentMapBinding
 import com.rshack.rstracker.viewmodel.MapViewModel
-import kotlinx.android.synthetic.main.nav_header.*
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
@@ -45,6 +49,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var drawerLayout: DrawerLayout
+    private val navController by lazy {
+        requireActivity().findNavController(R.id.nav_host_fragment)
+    }
+
     private lateinit var map: GoogleMap
     private lateinit var stopwatch: Chronometer
     private var trackDate: Long = 0
@@ -58,8 +67,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         application = requireNotNull(activity).application
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
+        drawerLayout = binding.drawerLayout
 
-        viewModel.getEmail()
+//        viewModel.getEmail()
         viewModel.clearPoints()
         viewModel.points.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
@@ -84,6 +94,28 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             } else {
                 if (isLocationPermissionGranted()) startTracking()
             }
+        }
+
+        binding.navView.setupWithNavController(navController)
+//        NavigationUI.setupActionBarWithNavController(activity, navController, drawerLayout)
+        binding.navView.setNavigationItemSelectedListener {
+            drawerLayout.closeDrawers()
+            when (it.itemId) {
+                R.id.nav_map_fragment -> {
+                    if (navController.popBackStack(R.id.mapFragment, false)) {
+                        navController.navigate(R.id.mapFragment)
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    }
+                }
+                R.id.nav_results_fragment -> {
+                    navController.navigate(R.id.resultsFragment)
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                }
+                R.id.nav_night_mode -> {
+//                    setTheme()
+                }
+            }
+            true
         }
 
 //        viewModel.emailLogIn.observe(viewLifecycleOwner) {
@@ -202,6 +234,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
             R.id.menu_btn_logout -> {
                 viewModel.logout()
                 findNavController().navigate(R.id.action_mapFragment_to_loginFragment)

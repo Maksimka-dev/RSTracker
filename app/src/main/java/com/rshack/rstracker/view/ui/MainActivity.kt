@@ -18,16 +18,15 @@ import com.rshack.rstracker.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var appBarConfiguration: AppBarConfiguration
+//    private lateinit var drawerLayout: DrawerLayout
+//    private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private lateinit var firebaseAuth: FirebaseAuth
 
     //    private lateinit var auth: FirebaseAuth
 //    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
-    private val navController by lazy {
-        this.findNavController(R.id.nav_host_fragment)
-    }
+//    private val navController by lazy {
+//        this.findNavController(R.id.nav_host_fragment)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,31 +34,31 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        drawerLayout = binding.drawerLayout
+//        drawerLayout = binding.drawerLayout
 
-        setupNavigationMenu()
+//        setupNavigationMenu()
 
 //        auth = FirebaseAuth.getInstance()
 
 //        setSupportActionBar(binding.toolbar)
 
-        binding.navView.setNavigationItemSelectedListener {
-            drawerLayout.closeDrawers()
-            when (it.itemId) {
-                R.id.nav_map_fragment -> {
-//                    if(!navController.popBackStack(R.id.mapFragment, false))
-                    navController.navigate(R.id.mapFragment)
-                }
-                R.id.nav_results_fragment -> {
-//                    if(!navController.popBackStack(R.id.resultsFragment, false))
-                    navController.navigate(R.id.resultsFragment)
-                }
-                R.id.nav_night_mode -> {
-                    setTheme()
-                }
-            }
-            true
-        }
+//        binding.navView.setNavigationItemSelectedListener {
+//            drawerLayout.closeDrawers()
+//            when (it.itemId) {
+//                R.id.nav_map_fragment -> {
+////                    if(!navController.popBackStack(R.id.mapFragment, false))
+//                    navController.navigate(R.id.mapFragment)
+//                }
+//                R.id.nav_results_fragment -> {
+////                    if(!navController.popBackStack(R.id.resultsFragment, false))
+//                    navController.navigate(R.id.resultsFragment)
+//                }
+//                R.id.nav_night_mode -> {
+//                    setTheme()
+//                }
+//            }
+//            true
+//        }
 
 //        val drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
 //        drawerLayout.addDrawerListener(drawerToggle)
@@ -69,48 +68,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setTheme() {
-//        val modeType = AppCompatDelegate.getDefaultNightMode()
-//        Log.d(com.rshack.rstracker.TAG, "$modeType")
-//        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        else
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     // button back and up works the same
-    override fun onSupportNavigateUp(): Boolean {
-//        return findNavController(R.id.nav_host_fragment).navigateUp()
-        return NavigationUI.navigateUp(navController, drawerLayout)
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+////        return findNavController(R.id.nav_host_fragment).navigateUp()
+//        return NavigationUI.navigateUp(navController, drawerLayout)
+//    }
 
-    private fun setupNavigationMenu() {
-        navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
-            if (nd.id == nc.graph.startDestination || nd.id == R.id.registerFragment) {
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-            } else {
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            }
-        }
+//    private fun setupNavigationMenu() {
+//        navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
+//            if (nd.id == nc.graph.startDestination || nd.id == R.id.registerFragment) {
+//                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+//            } else {
+//                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+//            }
+//        }
         // turn on left menu
 //        binding.navView.setupWithNavController(navController)
 //        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
-    }
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                drawerLayout.openDrawer(GravityCompat.START)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return when (item.itemId) {
+//            android.R.id.home -> {
+//                drawerLayout.openDrawer(GravityCompat.START)
+//                true
+//            }
+//            else -> super.onOptionsItemSelected(item)
+//        }
+//    }
+//
+//    override fun onBackPressed() {
+//        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            drawerLayout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
     }
-
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-}
