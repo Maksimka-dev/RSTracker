@@ -67,10 +67,6 @@ class MainActivity : AppCompatActivity() {
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun setTheme() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-    }
-
     // button back and up works the same
 //    override fun onSupportNavigateUp(): Boolean {
 ////        return findNavController(R.id.nav_host_fragment).navigateUp()

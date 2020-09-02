@@ -17,6 +17,7 @@ import android.widget.Chronometer
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -115,7 +116,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     drawerLayout.closeDrawer(GravityCompat.START)
                 }
                 R.id.nav_night_mode -> {
-//                    setTheme()
+                    setTheme()
                 }
             }
             true
@@ -129,6 +130,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 //        }
 
         return binding.root
+    }
+
+    private fun setTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
