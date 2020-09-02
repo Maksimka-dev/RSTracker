@@ -38,6 +38,7 @@
             android:layout_gravity="center|bottom"
             android:layout_marginBottom="60dp"
             android:text="0.0 м"
+            android:textColor="#000"
             android:textSize="25sp"
             tools:text="Distance" />
 
@@ -47,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="16dp"
+            android:textColor="#000"
             android:textSize="30sp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
