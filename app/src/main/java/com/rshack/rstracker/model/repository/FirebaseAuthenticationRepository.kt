@@ -51,7 +51,7 @@ class FirebaseAuthenticationRepository : IAuthenticationRepository {
             firebaseAuth.signOut()
             Log.d(TAG, "firebaseAuthLogout:success")
         } catch (e: Exception) {
-            Log.d(TAG, "firebaseAuthLogout:failure")
+            Log.d(TAG, "firebaseAuthLogout:failure $e")
         }
     }
 

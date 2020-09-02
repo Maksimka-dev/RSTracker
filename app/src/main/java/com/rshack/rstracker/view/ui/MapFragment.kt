@@ -107,12 +107,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             when (it.itemId) {
                 R.id.nav_map_fragment -> {
                     if (navController.popBackStack(R.id.mapFragment, false)) {
-                        navController.navigate(R.id.mapFragment)
+                        navController.navigate(R.id.actionShowMap)
                         drawerLayout.closeDrawer(GravityCompat.START)
                     }
                 }
                 R.id.nav_results_fragment -> {
-                    navController.navigate(R.id.resultsFragment)
+                    navController.navigate(R.id.action_mapFragment_to_resultsFragment)
                     drawerLayout.closeDrawer(GravityCompat.START)
                 }
                 R.id.nav_night_mode -> {
