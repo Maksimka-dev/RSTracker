@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.rshack.rstracker.AuthUiState
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentRegisterBinding
+import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.viewmodel.RegisterViewModel
 import kotlinx.android.synthetic.main.fragment_register.*
 

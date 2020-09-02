@@ -1,14 +1,15 @@
 package com.rshack.rstracker.view.adapter
 
 import androidx.paging.PageKeyedDataSource
-import com.rshack.rstracker.network.Urls
-import com.rshack.rstracker.network.PhotoApi
+import com.rshack.rstracker.model.data.Urls
+import com.rshack.rstracker.model.repository.network.PhotoApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 class PhotoDataSource(private val scope: CoroutineScope) : PageKeyedDataSource<Int, Urls>() {
+
     private val apiService = PhotoApi.retrofitService
 
     override fun loadInitial(

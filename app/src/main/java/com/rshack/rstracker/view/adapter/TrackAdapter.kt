@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rshack.rstracker.R
 import com.rshack.rstracker.model.data.Track
+import com.rshack.rstracker.utils.bindImage
 import kotlinx.android.synthetic.main.recycler_view_item.view.*
 import java.text.DateFormat
 import kotlin.math.round

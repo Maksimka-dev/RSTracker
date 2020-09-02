@@ -7,7 +7,8 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.rshack.rstracker.databinding.GridViewItemBinding
-import com.rshack.rstracker.network.Urls
+import com.rshack.rstracker.model.data.Urls
+import com.rshack.rstracker.utils.bindImage
 
 class PhotosAdapter(private val onClickListener: OnClickListener) :
     PagedListAdapter<Urls, PhotosAdapter.PhotoViewHolder>(DiffCallback) {

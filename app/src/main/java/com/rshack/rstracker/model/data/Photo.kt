@@ -1,4 +1,4 @@
-package com.rshack.rstracker.network
+package com.rshack.rstracker.model.data
 
 import com.squareup.moshi.Json
 

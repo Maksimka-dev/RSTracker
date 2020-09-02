@@ -1,6 +1,6 @@
 package com.rshack.rstracker.model.repository
 
-import com.rshack.rstracker.Result
+import com.rshack.rstracker.utils.Result
 
 interface IAuthenticationRepository {
     fun getCurrentUserEmail(): String?

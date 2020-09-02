@@ -13,6 +13,7 @@ import com.rshack.rstracker.view.adapter.PhotosAdapter
 import com.rshack.rstracker.viewmodel.PhotosViewModel
 
 class PhotosFragment : Fragment() {
+
     private lateinit var application: Application
 
     private val viewModel: PhotosViewModel by activityViewModels()

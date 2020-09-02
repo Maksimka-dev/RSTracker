@@ -2,14 +2,17 @@ package com.rshack.rstracker.model.repository
 
 import android.location.Location
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-import com.rshack.rstracker.TAG
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.service.GpsService
+import com.rshack.rstracker.utils.TAG
 
 class TrackRepository : ITrackRepository {
 

@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.rshack.rstracker.AuthUiState
+import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentLoginBinding
 import com.rshack.rstracker.viewmodel.LoginViewModel

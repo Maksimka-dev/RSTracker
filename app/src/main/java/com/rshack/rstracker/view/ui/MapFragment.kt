@@ -30,8 +30,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.rshack.rstracker.R
-import com.rshack.rstracker.TAG
 import com.rshack.rstracker.databinding.FragmentMapBinding
+import com.rshack.rstracker.utils.TAG
 import com.rshack.rstracker.viewmodel.MapViewModel
 import kotlin.math.round
 

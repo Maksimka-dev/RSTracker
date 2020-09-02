@@ -3,9 +3,9 @@ package com.rshack.rstracker.model.repository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.rshack.rstracker.Result
-import com.rshack.rstracker.TAG
+import com.rshack.rstracker.utils.TAG
 import kotlinx.coroutines.tasks.await
+import com.rshack.rstracker.utils.Result
 
 class FirebaseAuthenticationRepository : IAuthenticationRepository {
 

@@ -8,7 +8,7 @@ import androidx.paging.PagedList
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
-import com.rshack.rstracker.network.Urls
+import com.rshack.rstracker.model.data.Urls
 import com.rshack.rstracker.view.adapter.PhotoDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

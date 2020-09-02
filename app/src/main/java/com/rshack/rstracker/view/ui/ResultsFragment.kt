@@ -17,10 +17,6 @@ import com.rshack.rstracker.viewmodel.ResultsViewModel
 
 class ResultsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ResultsFragment()
-    }
-
     private val viewModel: ResultsViewModel by activityViewModels()
     private var _binding: FragmentResultsBinding? = null
     private val binding get() = _binding!!
