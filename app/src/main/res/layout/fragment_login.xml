@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="8dp">
@@ -80,7 +79,6 @@
         android:layout_marginBottom="8dp"
         android:background="@null"
         android:text="I forgot password"
-        android:textAllCaps="false"
-        android:textColor="@color/colorPrimary" />
+        android:textAllCaps="false" />
 
 </LinearLayout>
