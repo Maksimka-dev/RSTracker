@@ -24,8 +24,6 @@ class LoginFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
 
-//    private lateinit var navController: NavController
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

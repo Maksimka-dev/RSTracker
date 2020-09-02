@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Chronometer
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,8 +24,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -58,12 +57,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var stopwatch: Chronometer
     private var trackDate: Long = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         application = requireNotNull(activity).application
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         stopwatch = binding.stopwatch
@@ -96,8 +100,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        binding.navView.setupWithNavController(navController)
-//        NavigationUI.setupActionBarWithNavController(activity, navController, drawerLayout)
+
         binding.navView.setNavigationItemSelectedListener {
             drawerLayout.closeDrawers()
             when (it.itemId) {
@@ -125,13 +128,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 //            Log.d(TAG, it)
 //        }
 
-        setHasOptionsMenu(true)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initToolbar()
+
+//        binding.navView.setupWithNavController(navController)
+//        NavigationUI.setupActionBarWithNavController(
+//            requireActivity() as AppCompatActivity,
+//            navController,
+//            drawerLayout
+//        )
 //        viewModel.getEmail()
         viewModel.emailLogIn.observe(viewLifecycleOwner) {
             it ?: return@observe
@@ -139,6 +149,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             view.findViewById<TextView>(R.id.nav_tv_email).text = it
             Log.d(TAG, it)
         }
+    }
+
+    private fun initToolbar() {
+        val appCompatActivity = requireActivity() as AppCompatActivity
+        appCompatActivity.setSupportActionBar(binding.toolbar)
+        appCompatActivity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_nav_start)
+        appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun startTracking() {
