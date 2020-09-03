@@ -9,10 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.rshack.rstracker.utils.AuthUiState
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentLoginBinding
+import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -21,8 +22,6 @@ class LoginFragment : Fragment() {
     private val viewModel: LoginViewModel by activityViewModels()
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,8 +57,10 @@ class LoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null) {
+        if (FirebaseApp.getApps(requireContext()).isEmpty()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        }
+        if (viewModel.getFirebaseAuth().currentUser != null) {
             findNavController().navigate(R.id.action_loginFragment_to_mapFragment)
         }
     }

@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rshack.rstracker.utils.Result
 import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.utils.AuthUiState
+import com.rshack.rstracker.utils.Result
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -28,4 +28,6 @@ class LoginViewModel : ViewModel() {
     fun clearAuthResult() {
         _authResult.value = null
     }
+
+    fun getFirebaseAuth() = firebaseAuthenticationRepository.getAuth()
 }

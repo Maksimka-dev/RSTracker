@@ -1,6 +1,7 @@
 package com.rshack.rstracker.model.repository
 
 import android.util.Log
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.rshack.rstracker.utils.TAG
@@ -10,11 +11,12 @@ import com.rshack.rstracker.utils.Result
 class FirebaseAuthenticationRepository : IAuthenticationRepository {
 
     private val firebaseAuth by lazy {
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         FirebaseAuth.getInstance()
     }
 
     override fun getCurrentUserEmail(): String? = firebaseAuth.currentUser?.email
+
+    override fun getAuth(): FirebaseAuth = firebaseAuth
 
     override suspend fun login(email: String, password: String): Result<String?> =
         try {
