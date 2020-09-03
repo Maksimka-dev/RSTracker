@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -30,19 +29,15 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.navigation.NavigationView
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
-import com.rshack.rstracker.utils.TAG
 import com.rshack.rstracker.viewmodel.MapViewModel
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
 
 class MapFragment : Fragment(), OnMapReadyCallback {
-
-    companion object {
-        fun newInstance() = MapFragment()
-    }
 
     private lateinit var application: Application
     private val viewModel: MapViewModel by activityViewModels()
@@ -74,7 +69,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         stopwatch = binding.stopwatch
         drawerLayout = binding.drawerLayout
 
-//        viewModel.getEmail()
         viewModel.clearPoints()
         viewModel.points.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
@@ -122,13 +116,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             true
         }
 
-//        viewModel.emailLogIn.observe(viewLifecycleOwner) {
-//            it ?: return@observe
-//            Log.d(TAG, it)
-//            textView.text = it
-//            Log.d(TAG, it)
-//        }
-
         return binding.root
     }
 
@@ -140,20 +127,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         initToolbar()
-
-//        binding.navView.setupWithNavController(navController)
-//        NavigationUI.setupActionBarWithNavController(
-//            requireActivity() as AppCompatActivity,
-//            navController,
-//            drawerLayout
-//        )
-//        viewModel.getEmail()
-        viewModel.emailLogIn.observe(viewLifecycleOwner) {
-            it ?: return@observe
-            Log.d(TAG, it)
-            view.findViewById<TextView>(R.id.nav_tv_email).text = it
-            Log.d(TAG, it)
-        }
     }
 
     private fun initToolbar() {
@@ -161,6 +134,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         appCompatActivity.setSupportActionBar(binding.toolbar)
         appCompatActivity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_nav_start)
         appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val navView = requireView().findViewById<NavigationView>(R.id.nav_view)
+        val headerView = navView.getHeaderView(0)
+        val textViewEmail = headerView.findViewById<TextView>(R.id.nav_tv_email)
+        textViewEmail.text = viewModel.getEmail()
     }
 
     private fun startTracking() {

@@ -35,10 +35,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     val points: MutableLiveData<List<LatLng>> = repository.getCoordinates()
 
-    private val _emailLogIn = MutableLiveData<String>().apply { value = null }
-    val emailLogIn: LiveData<String>
-        get() = _emailLogIn
-
     private val polyline = PolylineOptions()
         .width(POLYLINE_WIDTH)
         .color(Color.RED)
@@ -99,7 +95,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         _distance.value = track.distance
     }
 
-    fun getEmail() {
-        firebaseAuthenticationRepository.getCurrentUserEmail()
-    }
+    fun getEmail(): String? = firebaseAuthenticationRepository.getCurrentUserEmail()
+
 }
