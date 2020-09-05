@@ -3,27 +3,28 @@ package com.rshack.rstracker.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
+import com.rshack.rstracker.model.repository.IAuthenticationRepository
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
 import com.rshack.rstracker.service.GpsService
 
 private const val POLYLINE_WIDTH = 10f
 
-class MapViewModel(application: Application) : AndroidViewModel(application) {
-
-    private var _application = getApplication<Application>()
-
-    private val repository: ITrackRepository = TrackRepository()
-    private val firebaseAuthenticationRepository = FirebaseAuthenticationRepository()
+class MapViewModel @ViewModelInject constructor (
+    val repository: ITrackRepository,
+    private val firebaseAuthenticationRepository: IAuthenticationRepository
+) : ViewModel() {
 
     private val _isRunning = MutableLiveData<Boolean>().apply { value = null }
     val isRunning: LiveData<Boolean>
@@ -63,16 +64,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() {
         firebaseAuthenticationRepository.logout()
-    }
-
-    fun stopService() {
-        _application.stopService(Intent(_application, GpsService()::class.java))
-    }
-
-    fun startService(trackDate: Long) {
-        val intent = Intent(_application, GpsService()::class.java)
-        intent.putExtra(GpsService.TRACK_DATE, trackDate)
-        _application.startService(intent)
     }
 
     fun updatePolyline(map: GoogleMap) {

@@ -3,6 +3,7 @@ package com.rshack.rstracker.view.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
@@ -22,6 +23,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,15 +34,18 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentMapBinding
+import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.viewmodel.MapViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
 
+@AndroidEntryPoint
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    private val viewModel: MapViewModel by viewModels()
     private lateinit var application: Application
-    private val viewModel: MapViewModel by activityViewModels()
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
@@ -146,7 +151,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         stopwatch.start()
         binding.floatingButton.setImageResource(R.drawable.ic_stop)
         trackDate = System.currentTimeMillis()
-        viewModel.startService(trackDate)
+        startService(trackDate)
         viewModel.startNewTrack(trackDate)
     }
 
@@ -158,7 +163,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.saveIntoFirebase(time, viewModel.distance.value ?: 0f, trackDate)
         viewModel.clearPoints()
         binding.floatingButton.setImageResource(R.drawable.ic_start)
-        viewModel.stopService()
+        stopService()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -171,7 +176,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.stopService()
+        stopService()
         _binding = null
     }
 
@@ -212,6 +217,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun stopService() {
+        application.stopService(Intent(application, GpsService()::class.java))
+    }
+
+    private fun startService(trackDate: Long) {
+        val intent = Intent(application, GpsService()::class.java)
+        intent.putExtra(GpsService.TRACK_DATE, trackDate)
+        application.startService(intent)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -222,7 +237,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         ) {
             // Start the service when the permission is granted
             // todo !!!
-            viewModel.startService(trackDate)
+            startService(trackDate)
         }
     }
 
