@@ -5,8 +5,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.rshack.rstracker.utils.Result
 import com.rshack.rstracker.utils.TAG
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class FirebaseAuthenticationRepository : IAuthenticationRepository {
+class FirebaseAuthenticationRepository @Inject constructor()
+    : IAuthenticationRepository {
 
     private val firebaseAuth by lazy {
         FirebaseAuth.getInstance()
@@ -54,12 +56,4 @@ class FirebaseAuthenticationRepository : IAuthenticationRepository {
             Log.d(TAG, "firebaseAuthLogout:failure $e")
         }
     }
-
-//    override fun logout(): Result<Boolean> =
-//        try {
-//            firebaseAuth.signOut()
-//            Result.Success(true)
-//        } catch (e: Exception) {
-//            Result.Error(e)
-//        }
 }

@@ -1,17 +1,18 @@
 package com.rshack.rstracker.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
+import com.rshack.rstracker.model.repository.IAuthenticationRepository
 import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.utils.Result
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
-
-    private val firebaseAuthenticationRepository = FirebaseAuthenticationRepository()
+class LoginViewModel @ViewModelInject constructor(
+    private val firebaseAuthenticationRepository: IAuthenticationRepository
+) : ViewModel() {
 
     private val _authResult = MutableLiveData<AuthUiState>()
     val authResult: LiveData<AuthUiState>

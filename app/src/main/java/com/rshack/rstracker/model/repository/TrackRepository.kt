@@ -13,8 +13,9 @@ import com.google.firebase.database.ValueEventListener
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.service.GpsService
 import com.rshack.rstracker.utils.TAG
+import javax.inject.Inject
 
-class TrackRepository : ITrackRepository {
+class TrackRepository @Inject constructor() : ITrackRepository {
 
     private val points = MutableLiveData<List<LatLng>>()
         .apply { value = listOf() }

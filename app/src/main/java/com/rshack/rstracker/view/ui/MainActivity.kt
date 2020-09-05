@@ -3,7 +3,9 @@ package com.rshack.rstracker.view.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.rshack.rstracker.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
