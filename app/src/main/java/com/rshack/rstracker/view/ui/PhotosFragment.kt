@@ -7,16 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.rshack.rstracker.databinding.FragmentPhotosBinding
 import com.rshack.rstracker.view.adapter.PhotosAdapter
 import com.rshack.rstracker.viewmodel.PhotosViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PhotosFragment : Fragment() {
 
     private lateinit var application: Application
 
-    private val viewModel: PhotosViewModel by activityViewModels()
+    private val viewModel: PhotosViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

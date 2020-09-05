@@ -1,5 +1,6 @@
 package com.rshack.rstracker.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,9 @@ import com.rshack.rstracker.model.repository.ITrackListRepository
 import com.rshack.rstracker.model.repository.TrackListRepository
 import kotlinx.coroutines.launch
 
-class ResultsViewModel : ViewModel() {
+class ResultsViewModel @ViewModelInject constructor(
+    private val repository: ITrackListRepository
+) : ViewModel() {
 
     private lateinit var _tracks: LiveData<List<Track>>
     val tracks: LiveData<List<Track>>
@@ -22,8 +25,6 @@ class ResultsViewModel : ViewModel() {
     private val _navigateToMapFragment = MutableLiveData<Track>()
     val navigateToMapFragment: LiveData<Track>
         get() = _navigateToMapFragment
-
-    private val repository: ITrackListRepository = TrackListRepository()
 
     init {
         viewModelScope.launch {

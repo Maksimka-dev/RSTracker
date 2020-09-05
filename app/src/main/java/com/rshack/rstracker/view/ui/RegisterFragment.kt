@@ -7,19 +7,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.rshack.rstracker.R
 import com.rshack.rstracker.databinding.FragmentRegisterBinding
 import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.viewmodel.RegisterViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_register.*
 
 const val MIN_PASSWORD_LENGTH = 6
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment() {
 
-    private val viewModel: RegisterViewModel by activityViewModels()
+    private val viewModel: RegisterViewModel by viewModels()
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
 
