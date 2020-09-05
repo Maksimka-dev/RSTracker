@@ -11,8 +11,9 @@ import com.google.firebase.database.ValueEventListener
 import com.rshack.rstracker.model.data.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class TrackListRepository : ITrackListRepository {
+class TrackListRepository @Inject constructor() : ITrackListRepository {
 
     override suspend fun load(): LiveData<List<Track>> = withContext(Dispatchers.Main) {
         val tracks = MutableLiveData<List<Track>>()
