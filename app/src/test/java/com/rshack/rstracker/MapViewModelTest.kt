@@ -1,7 +1,5 @@
 package com.rshack.rstracker
 
-import androidx.arch.core.executor.ArchTaskExecutor
-import androidx.arch.core.executor.TaskExecutor
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.rshack.rstracker.model.data.Track
