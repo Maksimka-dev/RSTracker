@@ -90,8 +90,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             it ?: return@observe
             if (it) {
                 stopTracking()
+                blockMenuItem(true)
             } else {
-                if (isLocationPermissionGranted()) startTracking()
+                if (isLocationPermissionGranted()) {
+                    startTracking()
+                    blockMenuItem(false)
+                }
             }
         }
 
@@ -117,6 +121,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         return binding.root
+    }
+
+    private fun blockMenuItem(b: Boolean) {
+        val navView = requireView().findViewById<NavigationView>(R.id.nav_view)
+        val menu = navView.menu.findItem(R.id.nav_results_fragment)
+        menu.isEnabled = b
     }
 
     private fun setTheme() {
