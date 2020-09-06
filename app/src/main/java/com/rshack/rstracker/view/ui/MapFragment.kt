@@ -40,12 +40,8 @@ import kotlin.math.round
 
 private const val PERMISSION_LOCATION = 1
 
-interface FragmentOnBackPressedListener {
-    fun onBackPressed()
-}
-
 @AndroidEntryPoint
-class MapFragment : Fragment(), OnMapReadyCallback, FragmentOnBackPressedListener {
+class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val viewModel: MapViewModel by viewModels()
     private lateinit var application: Application
@@ -276,10 +272,5 @@ class MapFragment : Fragment(), OnMapReadyCallback, FragmentOnBackPressedListene
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
-            drawerLayout.closeDrawer(GravityCompat.START)
     }
 }
