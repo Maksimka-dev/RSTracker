@@ -6,9 +6,9 @@ import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.rshack.rstracker.model.data.Track
+import com.rshack.rstracker.model.data.Urls
 import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.repository.TrackRepository
-import com.rshack.rstracker.model.data.Urls
 import com.rshack.rstracker.view.adapter.PhotoDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ class PhotosViewModel : ViewModel() {
     }
 
     private fun initializedPagedListBuilder(config: PagedList.Config):
-            LivePagedListBuilder<Int, Urls> {
+        LivePagedListBuilder<Int, Urls> {
         val dataSourceFactory = object : DataSource.Factory<Int, Urls>() {
             override fun create(): DataSource<Int, Urls> {
                 return PhotoDataSource(coroutineScope)

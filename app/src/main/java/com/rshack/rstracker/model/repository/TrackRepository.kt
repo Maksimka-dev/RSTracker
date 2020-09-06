@@ -36,7 +36,7 @@ class TrackRepository : ITrackRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 points.value = snapshot.children
                     .filter { it.hasChildren() }
-                    .map {point ->
+                    .map { point ->
                         val value = point.value as HashMap<*, *>?
                         val lat = value!!["latitude"].toString().toDouble()
                         val lng = value["longitude"].toString().toDouble()

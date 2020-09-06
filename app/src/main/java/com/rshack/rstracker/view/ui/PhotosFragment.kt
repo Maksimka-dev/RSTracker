@@ -29,7 +29,7 @@ class PhotosFragment : Fragment() {
         val track = PhotosFragmentArgs.fromBundle(requireArguments())
             .selectedTrack
 
-        binding.photoGrid.adapter = PhotosAdapter(PhotosAdapter.OnClickListener{
+        binding.photoGrid.adapter = PhotosAdapter(PhotosAdapter.OnClickListener {
             viewModel.onPhotoClicked(it, track)
             this.findNavController().navigate(PhotosFragmentDirections.actionShowResults())
         })

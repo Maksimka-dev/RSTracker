@@ -1,6 +1,5 @@
 package com.rshack.rstracker.model.repository
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.rshack.rstracker.model.data.Track
