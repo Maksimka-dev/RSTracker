@@ -11,6 +11,9 @@
     <item android:title="Settings">
         <menu>
             <item
+                android:id="@+id/nav_light_mode"
+                android:title="Light Mode" />
+            <item
                 android:id="@+id/nav_night_mode"
                 android:title="Night Mode" />
         </menu>

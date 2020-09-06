@@ -113,8 +113,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     navController.navigate(R.id.action_mapFragment_to_resultsFragment)
                     drawerLayout.closeDrawer(GravityCompat.START)
                 }
+                R.id.nav_light_mode -> {
+                    setLightTheme()
+                }
                 R.id.nav_night_mode -> {
-                    setTheme()
+                    setNightTheme()
                 }
             }
             true
@@ -129,8 +132,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         menu.isEnabled = b
     }
 
-    private fun setTheme() {
+    private fun setNightTheme() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
+
+    private fun setLightTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
