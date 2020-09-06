@@ -8,8 +8,8 @@ import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.rshack.rstracker.model.data.Track
-import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.model.data.Urls
+import com.rshack.rstracker.model.repository.ITrackRepository
 import com.rshack.rstracker.view.adapter.PhotoDataSource
 
 class PhotosViewModel @ViewModelInject constructor(

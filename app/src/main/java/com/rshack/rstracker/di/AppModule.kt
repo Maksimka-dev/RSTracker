@@ -1,12 +1,14 @@
 package com.rshack.rstracker.di
 
-import androidx.paging.PagedList
-import com.rshack.rstracker.model.repository.*
+import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
+import com.rshack.rstracker.model.repository.IAuthenticationRepository
+import com.rshack.rstracker.model.repository.ITrackListRepository
+import com.rshack.rstracker.model.repository.ITrackRepository
+import com.rshack.rstracker.model.repository.TrackListRepository
+import com.rshack.rstracker.model.repository.TrackRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ApplicationComponent
 import javax.inject.Singleton
 

@@ -4,11 +4,10 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.rshack.rstracker.utils.Result
 import com.rshack.rstracker.utils.TAG
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlinx.coroutines.tasks.await
 
-class FirebaseAuthenticationRepository @Inject constructor()
-    : IAuthenticationRepository {
+class FirebaseAuthenticationRepository @Inject constructor() : IAuthenticationRepository {
 
     private val firebaseAuth by lazy {
         FirebaseAuth.getInstance()

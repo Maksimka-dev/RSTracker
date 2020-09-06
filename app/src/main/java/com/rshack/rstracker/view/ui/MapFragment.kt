@@ -22,7 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -103,7 +102,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
-
 
         binding.navView.setNavigationItemSelectedListener {
             drawerLayout.closeDrawers()
@@ -210,7 +208,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        //selected track from ResultsFragment
+        // selected track from ResultsFragment
         val track = MapFragmentArgs.fromBundle(requireArguments()).selectedTrack
         if (track != null) {
             viewModel.showTrack(track)

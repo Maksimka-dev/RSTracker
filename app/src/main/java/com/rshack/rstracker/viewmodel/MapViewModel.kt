@@ -1,10 +1,7 @@
 package com.rshack.rstracker.viewmodel
 
-import android.app.Application
-import android.content.Intent
 import android.graphics.Color
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,15 +10,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.rshack.rstracker.model.data.Track
-import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.model.repository.IAuthenticationRepository
 import com.rshack.rstracker.model.repository.ITrackRepository
-import com.rshack.rstracker.model.repository.TrackRepository
-import com.rshack.rstracker.service.GpsService
 
 private const val POLYLINE_WIDTH = 10f
 
-class MapViewModel @ViewModelInject constructor (
+class MapViewModel @ViewModelInject constructor(
     val repository: ITrackRepository,
     private val firebaseAuthenticationRepository: IAuthenticationRepository
 ) : ViewModel() {
@@ -87,5 +81,4 @@ class MapViewModel @ViewModelInject constructor (
     }
 
     fun getEmail(): String? = firebaseAuthenticationRepository.getCurrentUserEmail()
-
 }

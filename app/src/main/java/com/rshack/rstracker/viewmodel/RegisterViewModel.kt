@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rshack.rstracker.model.repository.FirebaseAuthenticationRepository
 import com.rshack.rstracker.model.repository.IAuthenticationRepository
 import com.rshack.rstracker.utils.AuthUiState
 import com.rshack.rstracker.utils.Result

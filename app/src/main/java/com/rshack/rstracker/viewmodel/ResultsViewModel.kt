@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rshack.rstracker.model.data.Track
 import com.rshack.rstracker.model.repository.ITrackListRepository
-import com.rshack.rstracker.model.repository.TrackListRepository
 import kotlinx.coroutines.launch
 
 class ResultsViewModel @ViewModelInject constructor(
